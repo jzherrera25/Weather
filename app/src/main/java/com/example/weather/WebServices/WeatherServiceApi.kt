@@ -1,9 +1,9 @@
-package com.example.weather
+package com.example.weather.WebServices
 
+import com.example.weather.Models.WeatherModels.WeatherModel
 import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Path
-import javax.security.auth.callback.Callback
 
 
 interface WeatherServiceApi {

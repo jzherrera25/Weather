@@ -1,5 +1,8 @@
 package com.example.weather
 
+import com.example.weather.Models.WeatherModels.WeatherModel
+import com.example.weather.WebServices.GeocoderServiceApi
+import com.example.weather.WebServices.WeatherServiceApi
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -30,6 +33,18 @@ class WeatherRepository {
         .create(GeocoderServiceApi::class.java)
 
     private val weatherModelManager: WeatherModelManager = WeatherModelManager()
+
+    fun doAction() {
+
+    }
+
+    fun doRefresh() {
+
+    }
+
+    fun findCity() {
+
+    }
 
     fun getWeather() {
         this.weatherServiceApi.getWeather(this.darkSkyApiKey, "0", "0")
