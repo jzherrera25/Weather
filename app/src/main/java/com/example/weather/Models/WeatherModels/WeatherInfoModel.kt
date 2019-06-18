@@ -17,6 +17,7 @@ open class WeatherInfoModel: RealmObject() {
     var pressure: Double? = null
     var windSpeed: Double? = null
     var windGust: Double? = null
+    var windBearing: Double? = null
     var cloudCover: Double? = null
     var uvIndex: Int? = null
     var visibility: Double? = null

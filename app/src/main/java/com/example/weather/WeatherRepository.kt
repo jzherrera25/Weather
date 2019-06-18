@@ -55,6 +55,7 @@ class WeatherRepository private constructor() {
                 .enqueue(object: Callback<WeatherResult> {
                     override fun onResponse(call: Call<WeatherResult>, response: Response<WeatherResult>) {
                         Log.d("WeatherRepository", response.body()?.timezone.toString())
+                        Log.d("WeatherRepository", response.body()?.currently?.temperature.toString())
                     }
 
                     override fun onFailure(call: Call<WeatherResult>, t: Throwable) {
