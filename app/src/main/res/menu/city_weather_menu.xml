@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
       xmlns:tools="http://schemas.android.com/tools"
-      android:icon="@drawable/ic_menu_black_24dp"
-      tools:showIn="@layout/activity_weather">
+      tools:showIn="navigation_view">
 
       <item android:id="@+id/Test"
             android:text="Test"
