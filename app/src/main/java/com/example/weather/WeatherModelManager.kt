@@ -16,7 +16,7 @@ class WeatherModelManager {
     private val weatherModelResults: RealmResults<WeatherModel> = this.realm.where(WeatherModel::class.java).findAllAsync()
     private val weatherModelMap: MutableMap<Int, WeatherModel> = mutableMapOf()
 
-    constructor() {
+    init {
         // If no weather models in results. Add default city.
         if (this.realm.isEmpty) {
             this.realm.executeTransaction {

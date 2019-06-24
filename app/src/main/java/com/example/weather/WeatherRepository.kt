@@ -49,6 +49,14 @@ class WeatherRepository private constructor() {
 
     }
 
+    fun testGetCityName(): String {
+        return this.weatherModelManager.getWeatherModel(0)!!.city
+    }
+
+    fun getCityCount() : Int {
+        return this.weatherModelManager.getWeatherModelCount()
+    }
+
     fun getWeather(index: Int) {
         this.weatherModelManager.getWeatherModel(index)?.let {
             this.weatherServiceApi.getWeather(this.darkSkyApiKey, it.latitude.toString(), it.longitude.toString())

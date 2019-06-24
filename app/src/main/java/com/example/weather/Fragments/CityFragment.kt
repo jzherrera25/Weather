@@ -1,60 +1,43 @@
 package com.example.weather.Fragments
 
 import android.content.Context
-import android.net.Uri
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.BaseAdapter
+import android.widget.ListView
+import android.widget.TextView
 
 import com.example.weather.R
+import com.example.weather.WeatherRepository
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
 
-/**
- * A simple [Fragment] subclass.
- * Activities that contain this fragment must implement the
- * [CityFragment.OnFragmentInteractionListener] interface
- * to handle interaction events.
- * Use the [CityFragment.newInstance] factory method to
- * create an instance of this fragment.
- *
- */
 class CityFragment : Fragment() {
     // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
-    private var listener: OnFragmentInteractionListener? = null
+    internal var callback: OnCitFragmentInteractionListener? = null
+
+    private val weatherRepository: WeatherRepository = WeatherRepository.getInstance()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_city, container, false)
-    }
+        val view = inflater.inflate(R.layout.fragment_city, container, false)
 
-    // TODO: Rename method, update argument and hook method into UI event
-    fun onButtonPressed(uri: Uri) {
-        listener?.onFragmentInteraction(uri)
+        val listView = view.findViewById<ListView>(R.id.city_weather_list)
+        listView.adapter = CityWeatherListAdapater(view.context, this.weatherRepository)
+
+        return view
     }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        if (context is OnFragmentInteractionListener) {
-            listener = context
+        if (context is OnCitFragmentInteractionListener) {
+            callback = context
         } else {
             throw RuntimeException(context.toString() + " must implement OnFragmentInteractionListener")
         }
@@ -62,42 +45,49 @@ class CityFragment : Fragment() {
 
     override fun onDetach() {
         super.onDetach()
-        listener = null
+        callback = null
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     *
-     *
-     * See the Android Training lesson [Communicating with Other Fragments]
-     * (http://developer.android.com/training/basics/fragments/communicating.html)
-     * for more information.
-     */
-    interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        fun onFragmentInteraction(uri: Uri)
+    private class CityWeatherListAdapater(context: Context, weatherRepository: WeatherRepository): BaseAdapter() {
+
+        private val mContext: Context
+        private val weatherRepository: WeatherRepository
+
+        init {
+            this.mContext = context
+            this.weatherRepository = weatherRepository
+        }
+
+        override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
+            val layoutInflater = LayoutInflater.from(mContext)
+
+            val cityWeatherRow = layoutInflater.inflate(R.layout.city_weather_row, parent, false)
+            val cityName = cityWeatherRow.findViewById<TextView>(R.id.weather_city)
+            cityName.text = this.weatherRepository.testGetCityName()
+
+            return cityWeatherRow
+        }
+
+        override fun getItem(position: Int): Any {
+            return "TEST STRING"
+        }
+
+        override fun getItemId(position: Int): Long {
+            return position.toLong()
+        }
+
+        override fun getCount(): Int {
+            return 1
+        }
+    }
+
+    interface OnCitFragmentInteractionListener {
+
     }
 
     companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment CityFragment.
-         */
         // TODO: Rename and change types and number of parameters
         @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            CityFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
-            }
+        fun newInstance() = CityFragment()
     }
 }
