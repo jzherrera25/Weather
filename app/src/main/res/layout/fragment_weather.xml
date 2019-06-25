@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
              xmlns:tools="http://schemas.android.com/tools"
              android:layout_width="match_parent"
              android:layout_height="match_parent"
@@ -7,8 +7,40 @@
 
     <!-- TODO: Update blank fragment layout -->
     <TextView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:text="@string/hello_blank_fragment"/>
+            android:id="@+id/weather_fragment_city"
+            android:layout_centerHorizontal="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="125dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="City Placeholder"/>
+    <TextView
+            android:id="@+id/weather_fragment_description"
+            android:layout_centerHorizontal="true"
+            android:layout_alignTop="@id/weather_fragment_city"
+            android:layout_marginTop="25dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Description Placeholder"/>
+    <TextView
+            android:id="@+id/weather_fragment_temperature"
+            android:layout_centerHorizontal="true"
+            android:layout_alignTop="@id/weather_fragment_description"
+            android:layout_marginTop="30dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Temperature Placeholder"
+            android:textSize="30sp"/>
 
-</FrameLayout>
+    <android.support.v7.widget.RecyclerView
+            android:id="@+id/weather_fragment_hourly_recycler_view"
+            android:layout_width="300dp"
+            android:layout_height="50dp"
+            android:layout_centerHorizontal="true"
+            android:layout_alignTop="@id/weather_fragment_temperature"
+            android:layout_marginTop="60dp"
+            android:orientation="horizontal">
+
+    </android.support.v7.widget.RecyclerView>
+
+</RelativeLayout>

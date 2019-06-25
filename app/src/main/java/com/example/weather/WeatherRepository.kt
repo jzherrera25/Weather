@@ -37,27 +37,19 @@ class WeatherRepository private constructor() {
 
     private val weatherModelManager: WeatherModelManager = WeatherModelManager()
 
-    fun doAction() {
-        this.getWeather(0)
-    }
-
-    fun doRefresh() {
-
+    fun doRefresh(index: Int) {
+        this.getWeather(index)
     }
 
     fun findCity() {
 
     }
 
-    fun testGetCityName(): String {
-        return this.weatherModelManager.getWeatherModel(0)!!.city
-    }
-
     fun getCityCount() : Int {
         return this.weatherModelManager.getWeatherModelCount()
     }
 
-    fun getWeather(index: Int) {
+    private fun getWeather(index: Int) {
         this.weatherModelManager.getWeatherModel(index)?.let {
             this.weatherServiceApi.getWeather(this.darkSkyApiKey, it.latitude.toString(), it.longitude.toString())
                 .enqueue(object: Callback<WeatherResult> {
@@ -67,14 +59,10 @@ class WeatherRepository private constructor() {
                     }
 
                     override fun onFailure(call: Call<WeatherResult>, t: Throwable) {
-                        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+                        Log.d("WeatherRepository", "Failed to get response.")
                     }
                 })
         }
-    }
-
-    fun getWeatherAll() {
-
     }
 
     companion object {

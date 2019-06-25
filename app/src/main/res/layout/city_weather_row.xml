@@ -3,26 +3,29 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
-    <ImageView android:layout_width="wrap_content"
-               android:layout_height="wrap_content"
+    <ImageView android:id="@+id/city_row_weather_svg"
+               android:layout_width="wrap_content"
+               android:layout_height="50dp"
                android:layout_alignParentLeft="true"
-               android:paddingLeft="25dp"
-               android:id="@+id/weather_svg"
-               android:src="@drawable/ic_wi_day_sunny"
-    />
-    <TextView android:layout_width="wrap_content"
-              android:layout_height="wrap_content"
-              android:layout_alignLeft="@id/weather_svg"
-              android:paddingLeft="75dp"
-              android:id="@+id/weather_city"
-              android:textSize="24sp"
+               android:layout_marginLeft="10dp"
+               android:src="@drawable/ic_wi_day_sunny"/>
+
+    <TextView android:id="@+id/city_row_weather_city"
+              android:layout_width="wrap_content"
+              android:layout_height="50dp"
+              android:gravity="center"
+              android:layout_alignLeft="@id/city_row_weather_svg"
+              android:layout_marginLeft="50dp"
+              android:textSize="20sp"
               android:text="PlaceHolder"/>
-    <TextView android:layout_width="wrap_content"
-              android:layout_height="wrap_content"
-              android:id="@+id/weather_temperature"
+
+    <TextView android:id="@+id/city_row_weather_temperature"
+              android:layout_width="wrap_content"
+              android:layout_height="50dp"
+              android:gravity="center"
               android:layout_alignParentRight="true"
-              android:paddingRight="25dp"
-              android:textSize="24sp"
+              android:layout_marginRight="15dp"
+              android:textSize="20sp"
               android:text="70"/>
 
 </RelativeLayout>

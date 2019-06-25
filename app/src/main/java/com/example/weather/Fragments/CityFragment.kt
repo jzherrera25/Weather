@@ -15,9 +15,6 @@ import com.example.weather.WeatherRepository
 
 
 class CityFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    internal var callback: OnCitFragmentInteractionListener? = null
-
     private val weatherRepository: WeatherRepository = WeatherRepository.getInstance()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -36,19 +33,13 @@ class CityFragment : Fragment() {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        if (context is OnCitFragmentInteractionListener) {
-            callback = context
-        } else {
-            throw RuntimeException(context.toString() + " must implement OnFragmentInteractionListener")
-        }
     }
 
     override fun onDetach() {
         super.onDetach()
-        callback = null
     }
 
-    private class CityWeatherListAdapater(context: Context, weatherRepository: WeatherRepository): BaseAdapter() {
+    private inner class CityWeatherListAdapater(context: Context, weatherRepository: WeatherRepository): BaseAdapter() {
 
         private val mContext: Context
         private val weatherRepository: WeatherRepository
@@ -62,14 +53,13 @@ class CityFragment : Fragment() {
             val layoutInflater = LayoutInflater.from(mContext)
 
             val cityWeatherRow = layoutInflater.inflate(R.layout.city_weather_row, parent, false)
-            val cityName = cityWeatherRow.findViewById<TextView>(R.id.weather_city)
-            cityName.text = this.weatherRepository.testGetCityName()
+            val cityName = cityWeatherRow.findViewById<TextView>(R.id.city_row_weather_city)
 
             return cityWeatherRow
         }
 
         override fun getItem(position: Int): Any {
-            return "TEST STRING"
+            return "Placeholder string"
         }
 
         override fun getItemId(position: Int): Long {
@@ -77,17 +67,7 @@ class CityFragment : Fragment() {
         }
 
         override fun getCount(): Int {
-            return 1
+            return this.weatherRepository.getCityCount()
         }
-    }
-
-    interface OnCitFragmentInteractionListener {
-
-    }
-
-    companion object {
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance() = CityFragment()
     }
 }

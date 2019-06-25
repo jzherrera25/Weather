@@ -4,24 +4,15 @@
                 xmlns:app="http://schemas.android.com/apk/res-auto"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                tools:showIn="@layout/recycle_view_weather"
+                tools:showIn="@layout/view_pager_weather"
                 tools:context=".Activities.WeatherActivity">
 
-        <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Hello World!"
-                android:layout_marginTop="100sp"
-                android:layout_centerVertical="true"
-                android:layout_centerHorizontal="true"/>
 
-        <Button
-                android:id="@+id/doActionButton"
-                android:layout_marginBottom="100sp"
-                android:layout_centerVertical="true"
-                android:layout_centerHorizontal="true"
-                android:layout_alignParentBottom="true"
-                android:layout_width="150sp"
-                android:layout_height="wrap_content"
-                android:text="Test"/>
-    </RelativeLayout>
+        <android.support.v4.view.ViewPager
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/weather_view_pager">
+
+        </android.support.v4.view.ViewPager>
+
+</RelativeLayout>

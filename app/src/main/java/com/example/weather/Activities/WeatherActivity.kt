@@ -1,27 +1,25 @@
 package com.example.weather.Activities
 
-import android.content.Context
-import android.net.Uri
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.os.SystemClock
 import android.support.design.widget.NavigationView
 import android.support.v4.app.Fragment
+import android.support.v4.app.FragmentManager
+import android.support.v4.app.FragmentStatePagerAdapter
 import android.support.v4.view.GravityCompat
+import android.support.v4.view.ViewPager
 import android.support.v4.widget.DrawerLayout
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.widget.Toolbar
 import android.view.*
-import android.widget.BaseAdapter
-import android.widget.Button
-import android.widget.ListView
-import com.example.weather.Fragments.CityFragment
+import com.example.weather.Fragments.WeatherFragment
 import com.example.weather.R
 import com.example.weather.WeatherRepository
 
-class WeatherActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, CityFragment.OnCitFragmentInteractionListener {
+class WeatherActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
     private val weatherRepository: WeatherRepository = WeatherRepository.getInstance()
+    private lateinit var mViewPager: ViewPager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,12 +37,9 @@ class WeatherActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
         toggle.syncState()
         navView.setNavigationItemSelectedListener(this)
 
-        weatherRepository.doAction()
+        this.mViewPager = findViewById(R.id.weather_view_pager)
+        this.mViewPager.adapter = WeatherViewPager(this.supportFragmentManager)
 
-        val testButton = findViewById<Button>(R.id.doActionButton)
-        testButton.setOnClickListener {
-            weatherRepository.doAction()
-        }
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
@@ -55,5 +50,16 @@ class WeatherActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
         val drawerLayout: DrawerLayout = findViewById(R.id.weather_drawer_layout)
         drawerLayout.closeDrawer(GravityCompat.START)
         return true
+    }
+
+    private inner class WeatherViewPager(fm: FragmentManager): FragmentStatePagerAdapter(fm) {
+        override fun getItem(p0: Int): Fragment {
+            return WeatherFragment()
+        }
+
+        override fun getCount(): Int {
+            return 2
+        }
+
     }
 }

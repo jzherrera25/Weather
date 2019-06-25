@@ -11,7 +11,7 @@
         tools:openDrawer="start">
 
     <include
-        layout="@layout/recycle_view_weather"
+        layout="@layout/view_pager_weather"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 
