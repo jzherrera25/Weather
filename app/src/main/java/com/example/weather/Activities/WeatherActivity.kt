@@ -3,7 +3,6 @@ package com.example.weather.Activities
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.design.widget.NavigationView
-import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentStatePagerAdapter
 import android.support.v4.view.GravityCompat
@@ -14,18 +13,26 @@ import android.support.v7.widget.Toolbar
 import android.view.*
 import com.example.weather.Fragments.WeatherFragment
 import com.example.weather.R
-import com.example.weather.WeatherRepository
+import com.example.weather.ViewModels.WeatherViewModel
+import android.arch.lifecycle.Observer
 
 class WeatherActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
-    private val weatherRepository: WeatherRepository = WeatherRepository.getInstance()
+    private val weatherViewModel: WeatherViewModel = WeatherViewModel()
+
     private lateinit var mViewPager: ViewPager
+
+//    private var weatherViewModelObserver: Observer<WeatherViewModel> = Observer<WeatherViewModel> {newCityCount ->
+//        if (this::mViewPager.isInitialized) {
+//            this.mViewPager.adapter?.notifyDataSetChanged()
+//        }
+//    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_weather)
 
-        val toolbar : Toolbar = findViewById(R.id.toolbar)
+        val toolbar: Toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
 
         val drawerLayout: DrawerLayout = findViewById(R.id.weather_drawer_layout)
@@ -37,8 +44,8 @@ class WeatherActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
         toggle.syncState()
         navView.setNavigationItemSelectedListener(this)
 
-        this.mViewPager = findViewById(R.id.weather_view_pager)
-        this.mViewPager.adapter = WeatherViewPager(this.supportFragmentManager)
+        mViewPager = findViewById(R.id.weather_view_pager)
+        mViewPager.adapter = WeatherViewPager(this.supportFragmentManager)
 
     }
 
@@ -53,13 +60,13 @@ class WeatherActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
     }
 
     private inner class WeatherViewPager(fm: FragmentManager): FragmentStatePagerAdapter(fm) {
-        override fun getItem(p0: Int): Fragment {
-            return WeatherFragment()
+
+        override fun getItem(position: Int): WeatherFragment {
+            return WeatherFragment.newInstance(position, weatherViewModel)
         }
 
         override fun getCount(): Int {
-            return 2
+            return weatherViewModel.getCityCount()
         }
-
     }
 }

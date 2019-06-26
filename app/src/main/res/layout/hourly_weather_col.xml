@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="50dp"
+                android:layout_height="wrap_content">
+
+    <TextView android:id="@+id/daily_weather_hour"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:layout_alignParentTop="true"
+              android:layout_centerHorizontal="true"
+              android:textSize="15sp"
+              android:text="12 AM"/>
+
+    <ImageView android:id="@+id/daily_weather_svg"
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content"
+               android:layout_alignTop="@id/daily_weather_hour"
+               android:layout_marginTop="15dp"
+               android:layout_centerHorizontal="true"
+               android:src="@drawable/ic_wi_day_sunny"/>
+
+    <TextView android:id="@+id/daily_weather_temperature"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:layout_alignTop="@id/daily_weather_svg"
+              android:layout_centerHorizontal="true"
+              android:gravity="center"
+              android:layout_marginTop="32dp"
+              android:textSize="15sp"
+              android:text="70"/>
+
+</RelativeLayout>

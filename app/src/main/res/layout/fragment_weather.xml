@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             xmlns:app="http://schemas.android.com/apk/res-auto"
              xmlns:tools="http://schemas.android.com/tools"
              android:layout_width="match_parent"
              android:layout_height="match_parent"
@@ -10,7 +11,7 @@
             android:id="@+id/weather_fragment_city"
             android:layout_centerHorizontal="true"
             android:layout_alignParentTop="true"
-            android:layout_marginTop="125dp"
+            android:layout_marginTop="100dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="City Placeholder"/>
@@ -33,14 +34,22 @@
             android:textSize="30sp"/>
 
     <android.support.v7.widget.RecyclerView
+            app:layoutManager="android.support.v7.widget.LinearLayoutManager"
             android:id="@+id/weather_fragment_hourly_recycler_view"
             android:layout_width="300dp"
-            android:layout_height="50dp"
+            android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
+            android:foregroundGravity="center"
             android:layout_alignTop="@id/weather_fragment_temperature"
             android:layout_marginTop="60dp"
-            android:orientation="horizontal">
+            android:orientation="horizontal"/>
 
-    </android.support.v7.widget.RecyclerView>
+    <ListView
+            android:id="@+id/weather_fragment_daily_list_view"
+            android:layout_width="275dp"
+            android:layout_height="300dp"
+            android:layout_centerHorizontal="true"
+            android:layout_alignTop="@id/weather_fragment_hourly_recycler_view"
+            android:layout_marginTop="75dp"/>
 
 </RelativeLayout>

@@ -1,5 +1,6 @@
 package com.example.weather.ViewModels
 
+import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import com.example.weather.WeatherRepository
 
@@ -11,4 +12,7 @@ class WeatherViewModel : ViewModel() {
         this.weatherRepository = WeatherRepository.getInstance()
     }
 
+    var cityCount: MutableLiveData<Int> = MutableLiveData()
+
+    fun getCityCount(): Int = this.weatherRepository.getCityCount()
 }
