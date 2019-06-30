@@ -1,10 +1,9 @@
 package com.example.weather
 
-import android.arch.lifecycle.LiveData
 import android.util.Log
 import com.example.weather.Models.WeatherModels.*
+import io.reactivex.subjects.BehaviorSubject
 import io.realm.Realm
-import io.realm.RealmChangeListener
 import io.realm.RealmResults
 import io.realm.kotlin.createObject
 import io.realm.kotlin.where
@@ -14,6 +13,7 @@ class WeatherModelManager {
 
     private val realm: Realm = Realm.getDefaultInstance()
     private val weatherModelResults: RealmResults<WeatherModel> = this.realm.where(WeatherModel::class.java).findAllAsync()
+    private val weatherModelStatus = BehaviorSubject.create<List<WeatherModel>>()
     private val weatherModelMap: MutableMap<Int, WeatherModel> = mutableMapOf()
 
     init {
@@ -25,13 +25,35 @@ class WeatherModelManager {
                 newWeatherModel.longitude = DEFAULT_CITY_LONG
                 newWeatherModel.index = DEFAULT_CITY_INDEX
             }
+            this.realm.executeTransaction {
+                val newWeatherModel = this.realm.createObject<WeatherModel>("Placentia")
+                newWeatherModel.latitude = 33.8714814
+                newWeatherModel.longitude = -117.8617337
+                newWeatherModel.index = 1
+            }
         }
 
 
         // Find all weather models currently in database
         this.weatherModelResults.addChangeListener { element ->
             this@WeatherModelManager.addWeatherModelsToMap(element)
+            this@WeatherModelManager.weatherModelStatus.onNext(this.weatherModelMap.toSortedMap().values.toList())
         }
+    }
+
+    fun updateWeatherModel(weatherModel: WeatherModel) {
+        this.realm.executeTransaction {
+            val calendar = Calendar.getInstance()
+            weatherModel.lastUpdate = calendar.timeInMillis
+
+            val realmWeatherModel = this.realm.createObject(RealmWeatherModel::class.java)
+            realmWeatherModel.updateRealmWeatherModel(weatherModel?.weather)
+            weatherModel.lastWeatherModel = realmWeatherModel
+        }
+    }
+
+    fun observeWeatherModels() : BehaviorSubject<List<WeatherModel>> {
+        return weatherModelStatus
     }
 
     fun getWeatherModelCount() = this.weatherModelMap.size
@@ -40,12 +62,12 @@ class WeatherModelManager {
         return this.weatherModelMap[index]
     }
 
+    fun getWeatherModels(): List<WeatherModel> {
+        return this.weatherModelMap.toSortedMap().values.toList()
+    }
+
     private fun addWeatherModelsToMap(element: RealmResults<WeatherModel>) {
         for (weatherModel in element) {
-            Log.d("WeatherModelManager", weatherModel.city)
-            Log.d("WeatherModelManager", weatherModel.index.toString())
-            Log.d("WeatherModelManager", weatherModel.latitude.toString())
-            Log.d("WeatherModelManager", weatherModel.longitude.toString())
             this.weatherModelMap.putIfAbsent(weatherModel.index!!, weatherModel)
         }
     }

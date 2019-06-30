@@ -14,22 +14,15 @@
 
                 <AutoCompleteTextView android:gravity="center"
                                       android:layout_centerHorizontal="true"
-                                      android:layout_width="0dp"
-                                      android:layout_weight="0.7"
+                                      android:layout_width="match_parent"
                                       android:layout_height="wrap_content"/>
 
-                <ImageView android:id="@+id/options"
-                           android:layout_width="wrap_content"
-                           android:layout_height="wrap_content"
-                           android:layout_gravity="center"
-                           android:layout_marginRight="5dp"
-                           android:src="@drawable/ic_settings_black_24dp"/>
 
         </LinearLayout>
 
-        <fragment android:name="com.example.weather.Fragments.CityFragment"
-                  android:id="@+id/city_weather_fragment"
-                  android:layout_width="match_parent"
-                  android:layout_height="match_parent"/>
+        <FrameLayout android:name="com.example.weather.Fragments.CityListFragment"
+                     android:id="@+id/city_weather_fragment"
+                     android:layout_width="match_parent"
+                     android:layout_height="match_parent"/>
 
 </LinearLayout>

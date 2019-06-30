@@ -15,18 +15,31 @@ import com.example.weather.Fragments.WeatherFragment
 import com.example.weather.R
 import com.example.weather.ViewModels.WeatherViewModel
 import android.arch.lifecycle.Observer
+import android.support.v4.view.PagerAdapter
+import android.support.v4.widget.SwipeRefreshLayout
+import android.util.Log
+import com.example.weather.Fragments.CityListFragment
+import com.example.weather.Models.WeatherModels.WeatherModel
 
-class WeatherActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
+class WeatherActivity : AppCompatActivity() {
 
     private val weatherViewModel: WeatherViewModel = WeatherViewModel()
 
-    private lateinit var mViewPager: ViewPager
+    private lateinit var weatherViewPager: ViewPager
 
-//    private var weatherViewModelObserver: Observer<WeatherViewModel> = Observer<WeatherViewModel> {newCityCount ->
-//        if (this::mViewPager.isInitialized) {
-//            this.mViewPager.adapter?.notifyDataSetChanged()
-//        }
-//    }
+    private var weatherModelsObserver: Observer<List<WeatherModel>> = Observer { newWeatherModels ->
+        if (this::weatherViewPager.isInitialized) {
+            this.weatherViewPager.adapter?.let {
+                if (newWeatherModels!!.count() - it.count > 0) {
+                    (it as WeatherViewPager).addFragment(newWeatherModels!!.count() - it.count)
+                }
+                else if (it.count - newWeatherModels!!.count() > 0) {
+                    (it as WeatherViewPager).removeFragment(it.count - newWeatherModels!!.count())
+                }
+                it.notifyDataSetChanged()
+            }
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,37 +49,45 @@ class WeatherActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
         setSupportActionBar(toolbar)
 
         val drawerLayout: DrawerLayout = findViewById(R.id.weather_drawer_layout)
-        val navView: NavigationView = findViewById(R.id.nav_view)
+
         val toggle = ActionBarDrawerToggle(
             this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close
         )
         drawerLayout.addDrawerListener(toggle)
         toggle.syncState()
-        navView.setNavigationItemSelectedListener(this)
 
-        mViewPager = findViewById(R.id.weather_view_pager)
-        mViewPager.adapter = WeatherViewPager(this.supportFragmentManager)
+        val transaction = this.supportFragmentManager.beginTransaction()
+        transaction.replace(R.id.city_weather_fragment, CityListFragment.newInstance(this.weatherViewModel))
+        transaction.commit()
 
-    }
+        this.weatherViewPager = findViewById(R.id.weather_view_pager)
+        this.weatherViewPager.adapter = WeatherViewPager(this.supportFragmentManager)
 
-    override fun onNavigationItemSelected(item: MenuItem): Boolean {
-        // Handle navigation view item clicks here.
-        when (item.itemId) {
-
-        }
-        val drawerLayout: DrawerLayout = findViewById(R.id.weather_drawer_layout)
-        drawerLayout.closeDrawer(GravityCompat.START)
-        return true
+        this.weatherViewModel.weatherModelsStatus.observe(this, this.weatherModelsObserver)
     }
 
     private inner class WeatherViewPager(fm: FragmentManager): FragmentStatePagerAdapter(fm) {
 
+        private var fragments: MutableList<WeatherFragment> = mutableListOf()
+
+        fun addFragment(amount: Int = 1) {
+            for (i in 1..amount){
+                this.fragments.add(WeatherFragment.newInstance(this.fragments.count(), weatherViewModel))
+            }
+        }
+
+        fun removeFragment(amount: Int = 1) {
+            for (i in 1..amount){
+                this.fragments.removeAt(this.fragments.lastIndex)
+            }
+        }
+
         override fun getItem(position: Int): WeatherFragment {
-            return WeatherFragment.newInstance(position, weatherViewModel)
+            return this.fragments[position]
         }
 
         override fun getCount(): Int {
-            return weatherViewModel.getCityCount()
+            return this.fragments.count()
         }
     }
 }

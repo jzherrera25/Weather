@@ -1,17 +1,20 @@
 package com.example.weather
 
 import android.util.Log
-import com.example.weather.Models.WeatherModels.WeatherInfoModel
+import com.example.weather.Models.WeatherModels.RealmWeatherModel
 import com.example.weather.Models.WeatherModels.WeatherModel
 import com.example.weather.WebServices.GeocoderServiceApi
 import com.example.weather.WebServices.WeatherResult
 import com.example.weather.WebServices.WeatherServiceApi
+import io.reactivex.subjects.BehaviorSubject
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
+import java.text.FieldPosition
+import java.util.*
 
 class WeatherRepository private constructor() {
 
@@ -37,16 +40,34 @@ class WeatherRepository private constructor() {
 
     private val weatherModelManager: WeatherModelManager = WeatherModelManager()
 
-    fun doRefresh(index: Int) {
-        this.getWeather(index)
+    private val weatherModelStatus = BehaviorSubject.create<List<WeatherModel>>()
+
+    init {
+        this.weatherModelManager.observeWeatherModels().subscribe {
+                newWeatherModels -> this.weatherModelStatus.onNext(newWeatherModels)
+        }
+    }
+
+    fun observeWeatherModels() : BehaviorSubject<List<WeatherModel>> {
+        return weatherModelStatus
+    }
+
+    fun doRefresh() {
+        for (i in 1..this.weatherModelManager.getWeatherModelCount()) {
+            this.getWeather(i - 1)
+        }
     }
 
     fun findCity() {
 
     }
 
-    fun getCityCount() : Int {
-        return this.weatherModelManager.getWeatherModelCount()
+    fun getCityWeatherModel(position: Int) : WeatherModel? {
+        return this.weatherModelManager.getWeatherModel(position)
+    }
+
+    fun getCityWeatherModels() : List<WeatherModel>? {
+        return this.weatherModelManager.getWeatherModels()
     }
 
     private fun getWeather(index: Int) {
@@ -54,8 +75,12 @@ class WeatherRepository private constructor() {
             this.weatherServiceApi.getWeather(this.darkSkyApiKey, it.latitude.toString(), it.longitude.toString())
                 .enqueue(object: Callback<WeatherResult> {
                     override fun onResponse(call: Call<WeatherResult>, response: Response<WeatherResult>) {
-                        Log.d("WeatherRepository", response.body()?.timezone.toString())
-                        Log.d("WeatherRepository", response.body()?.currently?.temperature.toString())
+                        // Update weatherModelStatus
+                        it.weather = response.body()
+                        this@WeatherRepository.weatherModelStatus.onNext(this@WeatherRepository.weatherModelManager.getWeatherModels())
+
+                        // Store weather in database.
+                        this@WeatherRepository.weatherModelManager.updateWeatherModel(it)
                     }
 
                     override fun onFailure(call: Call<WeatherResult>, t: Throwable) {

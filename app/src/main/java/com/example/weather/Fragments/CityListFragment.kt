@@ -1,23 +1,29 @@
 package com.example.weather.Fragments
 
+import android.arch.lifecycle.Observer
 import android.content.Context
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
 import android.widget.ListView
 import android.widget.TextView
+import com.example.weather.Models.WeatherModels.WeatherModel
 
 import com.example.weather.R
-import com.example.weather.ViewModels.CityFragmentViewModel
 import com.example.weather.ViewModels.WeatherViewModel
-import com.example.weather.WeatherRepository
 
 
-class CityFragment : Fragment() {
-    private val cityFragmentViewModel: CityFragmentViewModel = CityFragmentViewModel()
+class CityListFragment : Fragment() {
+    private lateinit var weatherViewModel: WeatherViewModel
+    private lateinit var cityListView: ListView
+
+    private var weatherModelsObserver: Observer<List<WeatherModel>> = Observer {
+        (this.cityListView.adapter as? CityWeatherListAdapater)?.notifyDataSetChanged()
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,8 +33,10 @@ class CityFragment : Fragment() {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_city, container, false)
 
-        val listView = view.findViewById<ListView>(R.id.city_weather_list)
-        listView.adapter = CityWeatherListAdapater(view.context)
+        cityListView = view.findViewById<ListView>(R.id.city_weather_list)
+        cityListView.adapter = CityWeatherListAdapater(view.context)
+
+        this.weatherViewModel.weatherModelsStatus.observe(this, this.weatherModelsObserver)
 
         return view
     }
@@ -55,10 +63,10 @@ class CityFragment : Fragment() {
             val cityWeatherRow = layoutInflater.inflate(R.layout.city_weather_row, parent, false)
 
             val cityName = cityWeatherRow.findViewById<TextView>(R.id.city_row_weather_city)
-            cityName.text = cityFragmentViewModel.getCityName(position)
+            cityName.text = this@CityListFragment.weatherViewModel.getCityName(position)
 
             val cityTemperature = cityWeatherRow.findViewById<TextView>(R.id.city_row_weather_temperature)
-            cityTemperature.text = StringBuilder(cityFragmentViewModel.getCityTemperatureHigh(position).toString() + "/" + cityFragmentViewModel.getCityTemperatureLow(position).toString())
+            cityTemperature.text = this@CityListFragment.weatherViewModel.getCityCurrentTemp(position).toString()
 
             return cityWeatherRow
         }
@@ -72,7 +80,15 @@ class CityFragment : Fragment() {
         }
 
         override fun getCount(): Int {
-            return cityFragmentViewModel.getCityCount()
+            return this@CityListFragment.weatherViewModel.getCityCount()
+        }
+    }
+
+    companion object {
+        fun newInstance(vm: WeatherViewModel) : CityListFragment {
+            val fragment = CityListFragment()
+            fragment.weatherViewModel = vm
+            return fragment
         }
     }
 }

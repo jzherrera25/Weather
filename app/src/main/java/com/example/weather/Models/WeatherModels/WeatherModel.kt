@@ -1,5 +1,6 @@
 package com.example.weather.Models.WeatherModels
 
+import com.example.weather.WebServices.WeatherResult
 import io.realm.RealmList
 import io.realm.RealmObject
 import io.realm.annotations.Ignore
@@ -18,8 +19,9 @@ open class WeatherModel: RealmObject() {
     var longitude: Double = DEFAULT_CITY_LONG
 
     var index: Int = DEFAULT_CITY_INDEX
+    var lastUpdate: Long = 0
+    var lastWeatherModel: RealmWeatherModel? = null
 
-    var weatherInfoModel: WeatherInfoModel? = WeatherInfoModel()
-    var hourlyWeatherInfoModel: RealmList<WeatherInfoModel?> = RealmList()
-    var dailyWeatherInfoModel: RealmList<WeatherInfoModel?> = RealmList()
+    @Ignore
+    var weather: WeatherResult? = null
 }

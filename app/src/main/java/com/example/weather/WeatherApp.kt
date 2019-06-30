@@ -10,6 +10,5 @@ class WeatherApp : Application() {
         super.onCreate()
 
         Realm.init(this)
-        Realm.deleteRealm(Realm.getDefaultConfiguration())
     }
 }

@@ -1,16 +1,21 @@
 package com.example.weather.Fragments
 
+import android.arch.lifecycle.Observer
 import android.content.Context
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
 import android.widget.ListView
 import android.widget.TextView
+import com.example.weather.Activities.WeatherActivity
+import com.example.weather.Models.WeatherModels.WeatherModel
 
 import com.example.weather.R
 import com.example.weather.ViewModels.WeatherViewModel
@@ -20,31 +25,56 @@ class WeatherFragment : Fragment() {
 
     var position: Int = 0
     private lateinit var weatherViewModel: WeatherViewModel
+    private lateinit var cityTextView: TextView
+    private lateinit var currentDescriptionTextView: TextView
+    private lateinit var currentTempTextView: TextView
+    private lateinit var hourlyRecyclerView: RecyclerView
+    private lateinit var dailyListView: ListView
+    private lateinit var swipeRefreshLayout: SwipeRefreshLayout
+
+    private var weatherModelsObserver: Observer<List<WeatherModel>> = Observer { newWeatherModels ->
+        this.cityTextView?.text = this.weatherViewModel.getCityName(position)
+
+        this.currentDescriptionTextView?.text = this.weatherViewModel.getCityWeatherDescription(position)
+
+        this.currentTempTextView?.text = this.weatherViewModel.getCityCurrentTemp(position).toString()
+
+        this.hourlyRecyclerView?.adapter?.notifyDataSetChanged()
+
+        (this.dailyListView?.adapter as? DailyListAdapter)?.notifyDataSetChanged()
+
+        this.swipeRefreshLayout.isRefreshing = false
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        this.weatherViewModel.weatherModelsStatus.observe(this, this.weatherModelsObserver)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_weather, container, false)
 
-        val recyclerView = view.findViewById<RecyclerView>(R.id.weather_fragment_hourly_recycler_view)
-        recyclerView.adapter = HourlyRecyclerAdapter(view.context)
+        hourlyRecyclerView = view.findViewById<RecyclerView>(R.id.weather_fragment_hourly_recycler_view)
+        hourlyRecyclerView.adapter = HourlyRecyclerAdapter(view.context)
 
-        val listView = view.findViewById<ListView>(R.id.weather_fragment_daily_list_view)
-        listView.adapter = DailyListAdapter(view.context)
+        dailyListView = view.findViewById<ListView>(R.id.weather_fragment_daily_list_view)
+        dailyListView.adapter = DailyListAdapter(view.context)
+
+        this.cityTextView = view.findViewById(R.id.weather_fragment_city)
+
+        this.currentDescriptionTextView = view.findViewById(R.id.weather_fragment_description)
+
+        this.currentTempTextView = view.findViewById(R.id.weather_fragment_temperature)
+
+        this.swipeRefreshLayout = view.findViewById(R.id.weather_swipe_refresh)
+        this.swipeRefreshLayout.setOnRefreshListener {
+            this.swipeRefreshLayout.isRefreshing = this.weatherViewModel.doRefresh()
+        }
+
+        this.weatherViewModel.doRefresh()
 
         return view
-    }
-
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-    }
-
-    override fun onDetach() {
-        super.onDetach()
     }
 
     private open inner class HourlyViewHolder(v: View): RecyclerView.ViewHolder(v) {
@@ -56,7 +86,9 @@ class WeatherFragment : Fragment() {
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HourlyViewHolder {
             val layoutInflater = LayoutInflater.from(this.mContext)
+
             val hourlyWeatherCol = layoutInflater.inflate(R.layout.hourly_weather_col, parent, false)
+
             return HourlyViewHolder(hourlyWeatherCol)
         }
 
@@ -65,7 +97,9 @@ class WeatherFragment : Fragment() {
         }
 
         override fun onBindViewHolder(holder: HourlyViewHolder, position: Int) {
-            holder.itemView.daily_weather_hour.text = "1pm"
+            holder.itemView.daily_weather_hour.text = this@WeatherFragment.weatherViewModel.getCityHourlyTime(this@WeatherFragment.position)?.get(position)
+
+            holder.itemView.daily_weather_temperature.text = this@WeatherFragment.weatherViewModel.getCityHourlyTemp(this@WeatherFragment.position)?.get(position).toString()
         }
 
     }
@@ -77,7 +111,13 @@ class WeatherFragment : Fragment() {
             val layoutInflater = LayoutInflater.from(mContext)
 
             val cityWeatherRow = layoutInflater.inflate(R.layout.city_weather_row, parent, false)
-            val cityName = cityWeatherRow.findViewById<TextView>(R.id.city_row_weather_city)
+
+            val day = cityWeatherRow.findViewById<TextView>(R.id.city_row_weather_city)
+            day.text = this@WeatherFragment.weatherViewModel.getCityDailyDay(this@WeatherFragment.position)?.get(position).toString()
+
+            val temp = cityWeatherRow.findViewById<TextView>(R.id.city_row_weather_temperature)
+            temp.text = this@WeatherFragment.weatherViewModel.getCityDailyTempHigh(this@WeatherFragment.position)?.get(position).toString() + " " +
+                    this@WeatherFragment.weatherViewModel.getCityDailyTempLow(this@WeatherFragment.position)?.get(position).toString()
 
             return cityWeatherRow
         }
@@ -91,7 +131,7 @@ class WeatherFragment : Fragment() {
         }
 
         override fun getCount(): Int {
-            return 10
+            return 8
         }
     }
 
