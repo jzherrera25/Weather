@@ -8,16 +8,22 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.BaseAdapter
-import android.widget.ListView
-import android.widget.TextView
+import android.widget.*
 import com.example.weather.Models.WeatherModels.WeatherModel
-
 import com.example.weather.R
 import com.example.weather.ViewModels.WeatherViewModel
+import com.google.android.libraries.places.api.model.AutocompletePrediction
+import com.google.android.libraries.places.api.model.Place
+import com.google.android.libraries.places.api.model.TypeFilter
+import com.google.android.libraries.places.widget.AutocompleteSupportFragment
+import com.google.android.libraries.places.widget.listener.PlaceSelectionListener
+import java.util.*
+import kotlin.collections.ArrayList
 
 
 class CityListFragment : Fragment() {
+
+
     private lateinit var weatherViewModel: WeatherViewModel
     private lateinit var cityListView: ListView
 
@@ -68,6 +74,9 @@ class CityListFragment : Fragment() {
             val cityTemperature = cityWeatherRow.findViewById<TextView>(R.id.city_row_weather_temperature)
             cityTemperature.text = this@CityListFragment.weatherViewModel.getCityCurrentTemp(position).toString()
 
+            val cityIcon = cityWeatherRow.findViewById<ImageView>(R.id.city_row_weather_svg)
+            cityIcon.setImageResource(this.getDrawableId(this@CityListFragment.weatherViewModel.getCityCurrentIcon(position)))
+
             return cityWeatherRow
         }
 
@@ -81,6 +90,10 @@ class CityListFragment : Fragment() {
 
         override fun getCount(): Int {
             return this@CityListFragment.weatherViewModel.getCityCount()
+        }
+
+        fun getDrawableId(resourceName: String?) : Int {
+            return resources.getIdentifier(resourceName, "id", this@CityListFragment.activity?.packageName)
         }
     }
 

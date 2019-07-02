@@ -71,13 +71,13 @@ class WeatherActivity : AppCompatActivity() {
         private var fragments: MutableList<WeatherFragment> = mutableListOf()
 
         fun addFragment(amount: Int = 1) {
-            for (i in 1..amount){
+            for (i in 0 until amount){
                 this.fragments.add(WeatherFragment.newInstance(this.fragments.count(), weatherViewModel))
             }
         }
 
         fun removeFragment(amount: Int = 1) {
-            for (i in 1..amount){
+            for (i in 0 until amount){
                 this.fragments.removeAt(this.fragments.lastIndex)
             }
         }

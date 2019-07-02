@@ -12,11 +12,11 @@
                       android:layout_height="wrap_content"
                       android:orientation="horizontal">
 
-                <AutoCompleteTextView android:gravity="center"
+                <AutoCompleteTextView android:id="@+id/autocomplete_city_search"
+                                      android:gravity="center"
                                       android:layout_centerHorizontal="true"
                                       android:layout_width="match_parent"
                                       android:layout_height="wrap_content"/>
-
 
         </LinearLayout>
 

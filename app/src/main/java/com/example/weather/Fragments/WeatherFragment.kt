@@ -5,16 +5,14 @@ import android.content.Context
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v4.widget.SwipeRefreshLayout
-import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
+import android.widget.ImageView
 import android.widget.ListView
 import android.widget.TextView
-import com.example.weather.Activities.WeatherActivity
 import com.example.weather.Models.WeatherModels.WeatherModel
 
 import com.example.weather.R
@@ -72,8 +70,6 @@ class WeatherFragment : Fragment() {
             this.swipeRefreshLayout.isRefreshing = this.weatherViewModel.doRefresh()
         }
 
-        this.weatherViewModel.doRefresh()
-
         return view
     }
 
@@ -97,11 +93,16 @@ class WeatherFragment : Fragment() {
         }
 
         override fun onBindViewHolder(holder: HourlyViewHolder, position: Int) {
-            holder.itemView.daily_weather_hour.text = this@WeatherFragment.weatherViewModel.getCityHourlyTime(this@WeatherFragment.position)?.get(position)
+            holder.itemView.hourly_weather_hour.text = this@WeatherFragment.weatherViewModel.getCityHourlyTime(this@WeatherFragment.position)?.get(position)
 
-            holder.itemView.daily_weather_temperature.text = this@WeatherFragment.weatherViewModel.getCityHourlyTemp(this@WeatherFragment.position)?.get(position).toString()
+            holder.itemView.hourly_weather_temperature.text = this@WeatherFragment.weatherViewModel.getCityHourlyTemp(this@WeatherFragment.position)?.get(position).toString()
+
+            holder.itemView.hourly_weather_svg.setImageResource(this.getDrawableId(this@WeatherFragment.weatherViewModel.getCityHourlyIcon(this@WeatherFragment.position)?.get(position)))
         }
 
+        fun getDrawableId(resourceName: String?) : Int {
+            return resources.getIdentifier(resourceName, "id", this@WeatherFragment.activity?.packageName)
+        }
     }
 
     private inner class DailyListAdapter(context: Context) : BaseAdapter() {
@@ -112,12 +113,15 @@ class WeatherFragment : Fragment() {
 
             val cityWeatherRow = layoutInflater.inflate(R.layout.city_weather_row, parent, false)
 
-            val day = cityWeatherRow.findViewById<TextView>(R.id.city_row_weather_city)
-            day.text = this@WeatherFragment.weatherViewModel.getCityDailyDay(this@WeatherFragment.position)?.get(position).toString()
+            val dayTextView = cityWeatherRow.findViewById<TextView>(R.id.city_row_weather_city)
+            dayTextView.text = this@WeatherFragment.weatherViewModel.getCityDailyDay(this@WeatherFragment.position)?.get(position).toString()
 
-            val temp = cityWeatherRow.findViewById<TextView>(R.id.city_row_weather_temperature)
-            temp.text = this@WeatherFragment.weatherViewModel.getCityDailyTempHigh(this@WeatherFragment.position)?.get(position).toString() + " " +
+            val temperatureTextView = cityWeatherRow.findViewById<TextView>(R.id.city_row_weather_temperature)
+            temperatureTextView.text = this@WeatherFragment.weatherViewModel.getCityDailyTempHigh(this@WeatherFragment.position)?.get(position).toString() + " " +
                     this@WeatherFragment.weatherViewModel.getCityDailyTempLow(this@WeatherFragment.position)?.get(position).toString()
+
+            val iconImageView = cityWeatherRow.findViewById<ImageView>(R.id.city_row_weather_svg)
+            iconImageView.setImageResource(this.getDrawableId(this@WeatherFragment.weatherViewModel.getCityDailyIcon(this@WeatherFragment.position)?.get(position)))
 
             return cityWeatherRow
         }
@@ -132,6 +136,10 @@ class WeatherFragment : Fragment() {
 
         override fun getCount(): Int {
             return 8
+        }
+
+        fun getDrawableId(resourceName: String?) : Int {
+            return resources.getIdentifier(resourceName, "id", this@WeatherFragment.activity?.packageName)
         }
     }
 

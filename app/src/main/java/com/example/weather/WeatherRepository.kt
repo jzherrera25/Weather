@@ -1,7 +1,6 @@
 package com.example.weather
 
 import android.util.Log
-import com.example.weather.Models.WeatherModels.RealmWeatherModel
 import com.example.weather.Models.WeatherModels.WeatherModel
 import com.example.weather.WebServices.GeocoderServiceApi
 import com.example.weather.WebServices.WeatherResult
@@ -13,8 +12,6 @@ import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
-import java.text.FieldPosition
-import java.util.*
 
 class WeatherRepository private constructor() {
 

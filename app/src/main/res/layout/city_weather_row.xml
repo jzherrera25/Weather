@@ -10,7 +10,7 @@
                android:layout_centerVertical="true"
                android:layout_alignParentLeft="true"
                android:layout_marginLeft="10dp"
-               android:src="@drawable/ic_wi_day_sunny"/>
+               android:src="@drawable/clear_day"/>
 
     <TextView android:id="@+id/city_row_weather_city"
               android:layout_width="wrap_content"

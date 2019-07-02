@@ -3,7 +3,7 @@
                 android:layout_width="50dp"
                 android:layout_height="wrap_content">
 
-    <TextView android:id="@+id/daily_weather_hour"
+    <TextView android:id="@+id/hourly_weather_hour"
               android:layout_width="wrap_content"
               android:layout_height="wrap_content"
               android:layout_alignParentTop="true"
@@ -11,18 +11,18 @@
               android:textSize="15sp"
               android:text="12 AM"/>
 
-    <ImageView android:id="@+id/daily_weather_svg"
+    <ImageView android:id="@+id/hourly_weather_svg"
                android:layout_width="wrap_content"
                android:layout_height="wrap_content"
-               android:layout_alignTop="@id/daily_weather_hour"
+               android:layout_alignTop="@id/hourly_weather_hour"
                android:layout_marginTop="15dp"
                android:layout_centerHorizontal="true"
-               android:src="@drawable/ic_wi_day_sunny"/>
+               android:src="@drawable/clear_day"/>
 
-    <TextView android:id="@+id/daily_weather_temperature"
+    <TextView android:id="@+id/hourly_weather_temperature"
               android:layout_width="wrap_content"
               android:layout_height="wrap_content"
-              android:layout_alignTop="@id/daily_weather_svg"
+              android:layout_alignTop="@id/hourly_weather_svg"
               android:layout_centerHorizontal="true"
               android:gravity="center"
               android:layout_marginTop="32dp"
