@@ -27,7 +27,7 @@ class WeatherViewModel : ViewModel() {
         val currentTime = calendar.timeInMillis
         for (i in 1 until this.getCityCount()) {
             this.getCityLastUpdateTime(i)?.let {
-                refreshFlag = refreshFlag || ((currentTime - it) > (900000))
+                refreshFlag = refreshFlag || ((currentTime - it) > 900000)
             }
         }
         if (refreshFlag) {
@@ -38,6 +38,10 @@ class WeatherViewModel : ViewModel() {
         return refreshFlag
     }
 
+    fun removeCity(position: Int) {
+        this.weatherRepository.removeCity(position)
+    }
+
     private fun getCityLastUpdateTime(position: Int) : Long? {
         return this.weatherModelsStatus.value?.get(position)?.lastUpdate
     }
@@ -45,8 +49,8 @@ class WeatherViewModel : ViewModel() {
     fun getCityCurrentIcon(position: Int) : String? {
         val weatherModel = this.weatherModelsStatus.value?.get(position)
         return when(this.didRefresh) {
-            true -> weatherModel?.weather?.currently?.icon?.replace('-', '_')
-            false -> weatherModel?.lastWeatherModel?.currentIcon?.replace('-', '_')
+            true -> (weatherModel?.weather?.currently?.icon?.replace('-', '_')).orEmpty()
+            false -> (weatherModel?.lastWeatherModel?.currentIcon?.replace('-', '_')).orEmpty()
         }
     }
 
@@ -61,7 +65,7 @@ class WeatherViewModel : ViewModel() {
     fun getCityHourlyIcon(position: Int) : List<String>? {
         val weatherModel = this.weatherModelsStatus.value?.get(position)
         return when(this.didRefresh) {
-            true -> weatherModel?.weather?.hourly?.data?.map { it.icon?.replace('-', '_') }?.toList()
+            true -> weatherModel?.weather?.hourly?.data?.map { it.icon.replace('-', '_') }?.toList()
             false -> weatherModel?.lastWeatherModel?.hourlyIcon?.map { it.replace('-', '_') }?.toList()
         }
     }
@@ -92,7 +96,7 @@ class WeatherViewModel : ViewModel() {
     fun getCityDailyIcon(position: Int) : List<String>? {
         val weatherModel = this.weatherModelsStatus.value?.get(position)
         return when(this.didRefresh) {
-            true -> weatherModel?.weather?.daily?.data?.map { it.icon?.replace('-', '_') }?.toList()
+            true -> weatherModel?.weather?.daily?.data?.map { it.icon.replace('-', '_') }?.toList()
             false -> weatherModel?.lastWeatherModel?.dailyIcon?.map { it.replace('-', '_') }?.toList()
         }
     }

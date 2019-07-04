@@ -36,6 +36,7 @@ class WeatherModelManager {
 
         // Find all weather models currently in database
         this.weatherModelResults.addChangeListener { element ->
+            Log.d("WeatherMan", element.toString())
             this@WeatherModelManager.addWeatherModelsToMap(element)
             this@WeatherModelManager.weatherModelStatus.onNext(this.weatherModelMap.toSortedMap().values.toList())
         }
@@ -50,6 +51,23 @@ class WeatherModelManager {
             realmWeatherModel.updateRealmWeatherModel(weatherModel?.weather)
             weatherModel.lastWeatherModel = realmWeatherModel
         }
+    }
+
+    fun removeWeatherModel(index: Int) {
+        this.realm.executeTransaction {
+            var remove = this.weatherModelMap[index]
+
+            this.weatherModelMap.values.forEach {
+                if (it.index > remove?.index!!) {
+                    it.index -= it.index - remove?.index!!
+                }
+            }
+
+            remove?.deleteFromRealm()
+
+            this.weatherModelMap.remove(index)
+        }
+        this.weatherModelStatus.onNext(this.weatherModelMap.toSortedMap().values.toList())
     }
 
     fun observeWeatherModels() : BehaviorSubject<List<WeatherModel>> {
@@ -68,7 +86,7 @@ class WeatherModelManager {
 
     private fun addWeatherModelsToMap(element: RealmResults<WeatherModel>) {
         for (weatherModel in element) {
-            this.weatherModelMap.putIfAbsent(weatherModel.index!!, weatherModel)
+            this.weatherModelMap[weatherModel.index!!] = weatherModel
         }
     }
 }

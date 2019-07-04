@@ -2,10 +2,12 @@ package com.example.weather.Fragments
 
 import android.arch.lifecycle.Observer
 import android.content.Context
+import android.opengl.Visibility
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
@@ -55,27 +57,30 @@ class CityListFragment : Fragment() {
         super.onDetach()
     }
 
-    private inner class CityWeatherListAdapater(context: Context): BaseAdapter() {
-
-        private val mContext: Context
-
-        init {
-            this.mContext = context
-        }
+    private inner class CityWeatherListAdapater(context: Context): BaseAdapter(), View.OnLongClickListener, View.OnClickListener {
+        private val mContext: Context = context
 
         override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
             val layoutInflater = LayoutInflater.from(mContext)
 
             val cityWeatherRow = layoutInflater.inflate(R.layout.city_weather_row, parent, false)
 
-            val cityName = cityWeatherRow.findViewById<TextView>(R.id.city_row_weather_city)
+            val cityName: TextView  = cityWeatherRow.findViewById(R.id.city_row_weather_city)
             cityName.text = this@CityListFragment.weatherViewModel.getCityName(position)
 
-            val cityTemperature = cityWeatherRow.findViewById<TextView>(R.id.city_row_weather_temperature)
+            val cityTemperature: TextView = cityWeatherRow.findViewById(R.id.city_row_weather_temperature)
             cityTemperature.text = this@CityListFragment.weatherViewModel.getCityCurrentTemp(position).toString()
 
-            val cityIcon = cityWeatherRow.findViewById<ImageView>(R.id.city_row_weather_svg)
+            val cityIcon: ImageView = cityWeatherRow.findViewById(R.id.city_row_weather_svg)
             cityIcon.setImageResource(this.getDrawableId(this@CityListFragment.weatherViewModel.getCityCurrentIcon(position)))
+
+            val deleteButton: ImageButton = cityWeatherRow.findViewById(R.id.city_row_delete)
+            deleteButton.setOnClickListener {
+                this@CityListFragment.weatherViewModel.removeCity(position)
+            }
+
+            cityWeatherRow.setOnLongClickListener(this)
+            cityWeatherRow.setOnClickListener(this)
 
             return cityWeatherRow
         }
@@ -92,8 +97,30 @@ class CityListFragment : Fragment() {
             return this@CityListFragment.weatherViewModel.getCityCount()
         }
 
+        override fun onLongClick(v: View?): Boolean {
+            if (this.count > 1) {
+                val deleteButton: ImageButton? = v?.findViewById(R.id.city_row_delete)
+                deleteButton?.visibility = View.VISIBLE
+
+                val cityTemperature: TextView? = v?.findViewById(R.id.city_row_weather_temperature)
+                cityTemperature?.visibility = View.INVISIBLE
+                return true
+            }
+            return false
+        }
+
+        override fun onClick(v: View?) {
+            val deleteButton: ImageButton? = v?.findViewById(R.id.city_row_delete)
+
+            val cityTemperature: TextView? = v?.findViewById(R.id.city_row_weather_temperature)
+
+            deleteButton?.visibility = View.INVISIBLE
+            cityTemperature?.visibility = View.VISIBLE
+
+        }
+
         fun getDrawableId(resourceName: String?) : Int {
-            return resources.getIdentifier(resourceName, "id", this@CityListFragment.activity?.packageName)
+            return resources.getIdentifier(resourceName?.toString().orEmpty(), "drawable", this@CityListFragment.activity?.packageName)
         }
     }
 

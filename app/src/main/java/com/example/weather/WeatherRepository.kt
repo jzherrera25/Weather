@@ -42,6 +42,14 @@ class WeatherRepository private constructor() {
     init {
         this.weatherModelManager.observeWeatherModels().subscribe {
                 newWeatherModels -> this.weatherModelStatus.onNext(newWeatherModels)
+            for (it in newWeatherModels) {
+                if (it.lastWeatherModel == null) {
+                    Log.d("Weather", it.city)
+                    Log.d("Weather", "Test2")
+                    this.doRefresh()
+                    break
+                }
+            }
         }
     }
 
@@ -53,6 +61,10 @@ class WeatherRepository private constructor() {
         for (i in 1..this.weatherModelManager.getWeatherModelCount()) {
             this.getWeather(i - 1)
         }
+    }
+
+    fun removeCity(position: Int) {
+        this.weatherModelManager.removeWeatherModel(position)
     }
 
     fun findCity() {
@@ -74,7 +86,6 @@ class WeatherRepository private constructor() {
                     override fun onResponse(call: Call<WeatherResult>, response: Response<WeatherResult>) {
                         // Update weatherModelStatus
                         it.weather = response.body()
-                        this@WeatherRepository.weatherModelStatus.onNext(this@WeatherRepository.weatherModelManager.getWeatherModels())
 
                         // Store weather in database.
                         this@WeatherRepository.weatherModelManager.updateWeatherModel(it)

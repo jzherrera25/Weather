@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.widget.RecyclerView
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -30,7 +31,7 @@ class WeatherFragment : Fragment() {
     private lateinit var dailyListView: ListView
     private lateinit var swipeRefreshLayout: SwipeRefreshLayout
 
-    private var weatherModelsObserver: Observer<List<WeatherModel>> = Observer { newWeatherModels ->
+    private var weatherModelsObserver: Observer<List<WeatherModel>> = Observer {
         this.cityTextView?.text = this.weatherViewModel.getCityName(position)
 
         this.currentDescriptionTextView?.text = this.weatherViewModel.getCityWeatherDescription(position)
@@ -47,6 +48,11 @@ class WeatherFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         this.weatherViewModel.weatherModelsStatus.observe(this, this.weatherModelsObserver)
+    }
+
+    override fun onDestroy() {
+        this.weatherViewModel.weatherModelsStatus.removeObserver(this.weatherModelsObserver)
+        super.onDestroy()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -101,7 +107,7 @@ class WeatherFragment : Fragment() {
         }
 
         fun getDrawableId(resourceName: String?) : Int {
-            return resources.getIdentifier(resourceName, "id", this@WeatherFragment.activity?.packageName)
+            return resources.getIdentifier(resourceName?.toString().orEmpty(), "drawable", context?.packageName)
         }
     }
 
@@ -139,7 +145,7 @@ class WeatherFragment : Fragment() {
         }
 
         fun getDrawableId(resourceName: String?) : Int {
-            return resources.getIdentifier(resourceName, "id", this@WeatherFragment.activity?.packageName)
+            return resources.getIdentifier(resourceName?.toString().orEmpty(), "drawable", this@WeatherFragment.activity?.packageName)
         }
     }
 

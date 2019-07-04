@@ -2,22 +2,17 @@ package com.example.weather.Activities
 
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.support.design.widget.NavigationView
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentStatePagerAdapter
-import android.support.v4.view.GravityCompat
+import android.support.v4.app.FragmentTransaction
 import android.support.v4.view.ViewPager
 import android.support.v4.widget.DrawerLayout
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.widget.Toolbar
-import android.view.*
 import com.example.weather.Fragments.WeatherFragment
 import com.example.weather.R
 import com.example.weather.ViewModels.WeatherViewModel
 import android.arch.lifecycle.Observer
-import android.support.v4.view.PagerAdapter
-import android.support.v4.widget.SwipeRefreshLayout
-import android.util.Log
 import com.example.weather.Fragments.CityListFragment
 import com.example.weather.Models.WeatherModels.WeatherModel
 
@@ -30,13 +25,19 @@ class WeatherActivity : AppCompatActivity() {
     private var weatherModelsObserver: Observer<List<WeatherModel>> = Observer { newWeatherModels ->
         if (this::weatherViewPager.isInitialized) {
             this.weatherViewPager.adapter?.let {
-                if (newWeatherModels!!.count() - it.count > 0) {
-                    (it as WeatherViewPager).addFragment(newWeatherModels!!.count() - it.count)
+                when {
+                    newWeatherModels!!.count() - it.count > 0 -> {
+                        (it as WeatherViewPager).addFragment(newWeatherModels!!.count() - it.count)
+                        it.notifyDataSetChanged()
+                        this.weatherViewPager.invalidate()
+                    }
+                    it.count - newWeatherModels!!.count() > 0 -> {
+                        (it as WeatherViewPager).removeFragment(it.count - newWeatherModels!!.count())
+                        it.notifyDataSetChanged()
+                        this.weatherViewPager.invalidate()
+                    }
+                    else -> it.notifyDataSetChanged()
                 }
-                else if (it.count - newWeatherModels!!.count() > 0) {
-                    (it as WeatherViewPager).removeFragment(it.count - newWeatherModels!!.count())
-                }
-                it.notifyDataSetChanged()
             }
         }
     }
@@ -78,6 +79,8 @@ class WeatherActivity : AppCompatActivity() {
 
         fun removeFragment(amount: Int = 1) {
             for (i in 0 until amount){
+                this@WeatherActivity.supportFragmentManager.beginTransaction()
+                    .remove(this.fragments.last()).commitNow()
                 this.fragments.removeAt(this.fragments.lastIndex)
             }
         }
