@@ -2,7 +2,6 @@ package com.example.weather.ViewModels
 
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
-import android.util.Log
 import com.example.weather.Models.WeatherModels.WeatherModel
 import com.example.weather.WeatherRepository
 import java.text.SimpleDateFormat
@@ -27,11 +26,11 @@ class WeatherViewModel : ViewModel() {
         val currentTime = calendar.timeInMillis
         for (i in 1 until this.getCityCount()) {
             this.getCityLastUpdateTime(i)?.let {
-                refreshFlag = refreshFlag || ((currentTime - it) > 900000)
+                refreshFlag = refreshFlag || ((currentTime - it) > 10)
             }
         }
         if (refreshFlag) {
-            this.weatherRepository.doRefresh()
+            this.weatherRepository.doRefreshAll()
         }
 
         this.didRefresh = refreshFlag
@@ -40,6 +39,10 @@ class WeatherViewModel : ViewModel() {
 
     fun removeCity(position: Int) {
         this.weatherRepository.removeCity(position)
+    }
+
+    fun addCity(name: String, latitude: Double, longitude: Double) {
+        this.weatherRepository.addCity(name, latitude, longitude)
     }
 
     private fun getCityLastUpdateTime(position: Int) : Long? {

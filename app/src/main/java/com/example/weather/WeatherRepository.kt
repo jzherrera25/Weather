@@ -42,14 +42,6 @@ class WeatherRepository private constructor() {
     init {
         this.weatherModelManager.observeWeatherModels().subscribe {
                 newWeatherModels -> this.weatherModelStatus.onNext(newWeatherModels)
-            for (it in newWeatherModels) {
-                if (it.lastWeatherModel == null) {
-                    Log.d("Weather", it.city)
-                    Log.d("Weather", "Test2")
-                    this.doRefresh()
-                    break
-                }
-            }
         }
     }
 
@@ -57,26 +49,24 @@ class WeatherRepository private constructor() {
         return weatherModelStatus
     }
 
-    fun doRefresh() {
+    fun doRefreshAll() {
         for (i in 1..this.weatherModelManager.getWeatherModelCount()) {
-            this.getWeather(i - 1)
+            this.doRefresh(i)
         }
+    }
+
+    fun doRefresh(index: Int) {
+        this.getWeather(index - 1)
     }
 
     fun removeCity(position: Int) {
         this.weatherModelManager.removeWeatherModel(position)
     }
 
-    fun findCity() {
+    fun addCity(name: String, latitude: Double, longitude: Double) {
+        this.weatherModelManager.addWeatherModel(name, latitude, longitude)
 
-    }
-
-    fun getCityWeatherModel(position: Int) : WeatherModel? {
-        return this.weatherModelManager.getWeatherModel(position)
-    }
-
-    fun getCityWeatherModels() : List<WeatherModel>? {
-        return this.weatherModelManager.getWeatherModels()
+        this.getWeather(this.weatherModelManager.getWeatherModelCount())
     }
 
     private fun getWeather(index: Int) {
@@ -86,6 +76,7 @@ class WeatherRepository private constructor() {
                     override fun onResponse(call: Call<WeatherResult>, response: Response<WeatherResult>) {
                         // Update weatherModelStatus
                         it.weather = response.body()
+                        Log.d("WeatherRepository", it.city)
 
                         // Store weather in database.
                         this@WeatherRepository.weatherModelManager.updateWeatherModel(it)

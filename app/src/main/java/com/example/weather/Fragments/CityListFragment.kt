@@ -14,6 +14,8 @@ import android.widget.*
 import com.example.weather.Models.WeatherModels.WeatherModel
 import com.example.weather.R
 import com.example.weather.ViewModels.WeatherViewModel
+import com.google.android.gms.common.api.Status
+import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.model.AutocompletePrediction
 import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.api.model.TypeFilter
@@ -23,11 +25,11 @@ import java.util.*
 import kotlin.collections.ArrayList
 
 
-class CityListFragment : Fragment() {
-
+class CityListFragment : Fragment(), PlaceSelectionListener {
 
     private lateinit var weatherViewModel: WeatherViewModel
     private lateinit var cityListView: ListView
+    private lateinit var autocompleteSupportFragment: AutocompleteSupportFragment
 
     private var weatherModelsObserver: Observer<List<WeatherModel>> = Observer {
         (this.cityListView.adapter as? CityWeatherListAdapater)?.notifyDataSetChanged()
@@ -41,20 +43,36 @@ class CityListFragment : Fragment() {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_city, container, false)
 
-        cityListView = view.findViewById<ListView>(R.id.city_weather_list)
+        cityListView = view.findViewById(R.id.city_weather_list)
         cityListView.adapter = CityWeatherListAdapater(view.context)
 
         this.weatherViewModel.weatherModelsStatus.observe(this, this.weatherModelsObserver)
 
+
+        if (!Places.isInitialized()) {
+            Places.initialize(view.context, "AIzaSyCVxQr8GgMh4isXwOVeuDPdTWW_kMBfQYc")
+        }
+
+        this.autocompleteSupportFragment = this.fragmentManager?.findFragmentById(R.id.autocomplete_fragment) as AutocompleteSupportFragment
+        this.autocompleteSupportFragment.setTypeFilter(TypeFilter.CITIES)
+        this.autocompleteSupportFragment.setPlaceFields(listOf(Place.Field.LAT_LNG, Place.Field.NAME))
+        this.autocompleteSupportFragment.setOnPlaceSelectedListener(this)
+
         return view
     }
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
+    override fun onPlaceSelected(place: Place) {
+        Log.d("WeatherCity", place.name)
+        Log.d("WeatherCity", place.latLng.toString())
+        Log.d("WeatherCity", "Lat: " + place.latLng?.latitude.toString())
+        Log.d("WeatherCity", "Long: " + place.latLng?.longitude.toString())
+
+        this.autocompleteSupportFragment.setText("")
+        this.weatherViewModel.addCity(place?.name!!, place.latLng?.latitude!!, place.latLng?.longitude!!)
     }
 
-    override fun onDetach() {
-        super.onDetach()
+    override fun onError(status: Status) {
+        Log.d("WeatherCity", "poop")
     }
 
     private inner class CityWeatherListAdapater(context: Context): BaseAdapter(), View.OnLongClickListener, View.OnClickListener {

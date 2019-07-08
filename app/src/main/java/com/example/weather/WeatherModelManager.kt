@@ -19,24 +19,12 @@ class WeatherModelManager {
     init {
         // If no weather models in results. Add default city.
         if (this.realm.isEmpty) {
-            this.realm.executeTransaction {
-                val newWeatherModel = this.realm.createObject<WeatherModel>(DEFAULT_CITY)
-                newWeatherModel.latitude = DEFAULT_CITY_LAT
-                newWeatherModel.longitude = DEFAULT_CITY_LONG
-                newWeatherModel.index = DEFAULT_CITY_INDEX
-            }
-            this.realm.executeTransaction {
-                val newWeatherModel = this.realm.createObject<WeatherModel>("Placentia")
-                newWeatherModel.latitude = 33.8714814
-                newWeatherModel.longitude = -117.8617337
-                newWeatherModel.index = 1
-            }
+            this.addWeatherModel(DEFAULT_CITY, DEFAULT_CITY_LAT, DEFAULT_CITY_LONG)
         }
 
 
         // Find all weather models currently in database
         this.weatherModelResults.addChangeListener { element ->
-            Log.d("WeatherMan", element.toString())
             this@WeatherModelManager.addWeatherModelsToMap(element)
             this@WeatherModelManager.weatherModelStatus.onNext(this.weatherModelMap.toSortedMap().values.toList())
         }
@@ -55,19 +43,33 @@ class WeatherModelManager {
 
     fun removeWeatherModel(index: Int) {
         this.realm.executeTransaction {
-            var remove = this.weatherModelMap[index]
+            var weatherModel = this.weatherModelMap[index]
+            this.weatherModelMap.remove(index)
 
-            this.weatherModelMap.values.forEach {
-                if (it.index > remove?.index!!) {
-                    it.index -= it.index - remove?.index!!
+            for(i in 0 until this.weatherModelMap.count()) {
+                val tempWeatherModel = this.weatherModelMap[i]
+                tempWeatherModel?.let {
+                    if (it.index > weatherModel?.index!!) {
+                        it.index -= it.index - weatherModel?.index!!
+                        this.weatherModelMap.remove(i)
+                        this.weatherModelMap[it.index] = it
+                    }
                 }
             }
 
-            remove?.deleteFromRealm()
 
-            this.weatherModelMap.remove(index)
+            weatherModel?.deleteFromRealm()
         }
         this.weatherModelStatus.onNext(this.weatherModelMap.toSortedMap().values.toList())
+    }
+
+    fun addWeatherModel(name: String, latitude: Double, longitude: Double) {
+        this.realm.executeTransaction {
+            val newWeatherModel = this.realm.createObject<WeatherModel>(name)
+            newWeatherModel.latitude = latitude
+            newWeatherModel.longitude = longitude
+            newWeatherModel.index = this.getWeatherModelCount()
+        }
     }
 
     fun observeWeatherModels() : BehaviorSubject<List<WeatherModel>> {
