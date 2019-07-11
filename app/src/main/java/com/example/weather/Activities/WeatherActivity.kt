@@ -13,6 +13,7 @@ import com.example.weather.Fragments.WeatherFragment
 import com.example.weather.R
 import com.example.weather.ViewModels.WeatherViewModel
 import android.arch.lifecycle.Observer
+import android.util.Log
 import com.example.weather.Fragments.CityListFragment
 import com.example.weather.Models.WeatherModels.WeatherModel
 
@@ -37,6 +38,9 @@ class WeatherActivity : AppCompatActivity() {
                         this.weatherViewPager.invalidate()
                     }
                     else -> it.notifyDataSetChanged()
+                }
+                if (this.weatherViewPager.currentItem >= it.count) {
+                    this.weatherViewPager.currentItem = it.count - 1
                 }
             }
         }

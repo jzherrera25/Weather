@@ -61,20 +61,21 @@ class WeatherModelManager {
     fun removeWeatherModel(index: Int) {
         var weatherModel = this.weatherModelMap[index]
 
-
         this.realm.executeTransaction {
             for(i in 0 until this.weatherModelMap.count()) {
                 val tempWeatherModel = this.weatherModelMap[i]
                 tempWeatherModel?.let {
-                    if (it.index > weatherModel?.index!!) {
+                    if (it.index > index!!) {
                         Log.d("WeatherModelManager", "Index " + it.index.toString())
-                        it.index -= it.index - weatherModel?.index!!
+                        it.index -= 1
                         Log.d("WeatherModelManager", "Index " + it.index.toString())
                         this.weatherModelMap[it.index] = it
                     }
                 }
             }
+
             this.weatherModelMap.remove(this.weatherModelMap.count() - 1)
+
             weatherModel?.deleteFromRealm()
         }
     }

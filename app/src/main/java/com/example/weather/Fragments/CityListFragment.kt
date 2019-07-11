@@ -33,6 +33,7 @@ class CityListFragment : Fragment(), PlaceSelectionListener {
 
     private var weatherModelIndicesObserver: Observer<List<Int>> = Observer {
         (this.cityListView.adapter as? CityWeatherListAdapater)?.notifyDataSetChanged()
+        (this.cityListView.adapter as? CityWeatherListAdapater)?.notifyDataSetInvalidated()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
