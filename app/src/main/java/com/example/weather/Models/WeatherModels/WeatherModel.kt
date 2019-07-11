@@ -13,12 +13,14 @@ const val DEFAULT_CITY_INDEX = 0
 
 open class WeatherModel: RealmObject() {
 
+    var  index: Int = DEFAULT_CITY_INDEX
+
     // Default city assignment.
-    @PrimaryKey var city: String = DEFAULT_CITY
+    @PrimaryKey
+    var city: String = DEFAULT_CITY
     var latitude: Double = DEFAULT_CITY_LAT
     var longitude: Double = DEFAULT_CITY_LONG
 
-    var index: Int = DEFAULT_CITY_INDEX
     var lastUpdate: Long = 0
     var lastWeatherModel: RealmWeatherModel? = null
 

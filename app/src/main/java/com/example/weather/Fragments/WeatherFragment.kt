@@ -31,49 +31,55 @@ class WeatherFragment : Fragment() {
     private lateinit var dailyListView: ListView
     private lateinit var swipeRefreshLayout: SwipeRefreshLayout
 
-    private var weatherModelsObserver: Observer<List<WeatherModel>> = Observer {
-        this.cityTextView?.text = this.weatherViewModel.getCityName(position)
+    private var weatherModelsObserver: Observer<List<Int>> = Observer { updatedIndices ->
+        updatedIndices?.contains(this.position)?.let {
+            if (it) {
+                this.cityTextView?.text = this.weatherViewModel.getCityName(this.position)
 
-        this.currentDescriptionTextView?.text = this.weatherViewModel.getCityWeatherDescription(position)
+                this.currentDescriptionTextView?.text = this.weatherViewModel.getCityWeatherDescription(this.position)
 
-        this.currentTempTextView?.text = this.weatherViewModel.getCityCurrentTemp(position).toString()
+                this.currentTempTextView?.text = this.weatherViewModel.getCityCurrentTemp(this.position).toString()
 
-        this.hourlyRecyclerView?.adapter?.notifyDataSetChanged()
+                this.hourlyRecyclerView?.adapter?.notifyDataSetChanged()
 
-        (this.dailyListView?.adapter as? DailyListAdapter)?.notifyDataSetChanged()
-
+                (this.dailyListView?.adapter as? DailyListAdapter)?.notifyDataSetChanged()
+            }
+        }
         this.swipeRefreshLayout.isRefreshing = false
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        this.weatherViewModel.weatherModelsStatus.observe(this, this.weatherModelsObserver)
+        this.weatherViewModel.weatherModelIndices.observe(this, this.weatherModelsObserver)
     }
 
     override fun onDestroy() {
-        this.weatherViewModel.weatherModelsStatus.removeObserver(this.weatherModelsObserver)
         super.onDestroy()
+        this.weatherViewModel.weatherModelIndices.removeObserver(this.weatherModelsObserver)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_weather, container, false)
 
-        hourlyRecyclerView = view.findViewById<RecyclerView>(R.id.weather_fragment_hourly_recycler_view)
+        hourlyRecyclerView = view.findViewById(R.id.weather_fragment_hourly_recycler_view)
         hourlyRecyclerView.adapter = HourlyRecyclerAdapter(view.context)
 
-        dailyListView = view.findViewById<ListView>(R.id.weather_fragment_daily_list_view)
+        dailyListView = view.findViewById(R.id.weather_fragment_daily_list_view)
         dailyListView.adapter = DailyListAdapter(view.context)
 
         this.cityTextView = view.findViewById(R.id.weather_fragment_city)
+        this.cityTextView?.text = this.weatherViewModel.getCityName(this.position)
 
         this.currentDescriptionTextView = view.findViewById(R.id.weather_fragment_description)
+        this.currentDescriptionTextView?.text = this.weatherViewModel.getCityWeatherDescription(this.position)
 
         this.currentTempTextView = view.findViewById(R.id.weather_fragment_temperature)
+        this.currentTempTextView?.text = this.weatherViewModel.getCityCurrentTemp(this.position).toString()
 
         this.swipeRefreshLayout = view.findViewById(R.id.weather_swipe_refresh)
         this.swipeRefreshLayout.setOnRefreshListener {
-            this.swipeRefreshLayout.isRefreshing = this.weatherViewModel.doRefresh()
+            this.swipeRefreshLayout.isRefreshing = this.weatherViewModel.doRefreshAll()
         }
 
         return view

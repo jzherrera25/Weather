@@ -31,7 +31,7 @@ class CityListFragment : Fragment(), PlaceSelectionListener {
     private lateinit var cityListView: ListView
     private lateinit var autocompleteSupportFragment: AutocompleteSupportFragment
 
-    private var weatherModelsObserver: Observer<List<WeatherModel>> = Observer {
+    private var weatherModelIndicesObserver: Observer<List<Int>> = Observer {
         (this.cityListView.adapter as? CityWeatherListAdapater)?.notifyDataSetChanged()
     }
 
@@ -46,7 +46,7 @@ class CityListFragment : Fragment(), PlaceSelectionListener {
         cityListView = view.findViewById(R.id.city_weather_list)
         cityListView.adapter = CityWeatherListAdapater(view.context)
 
-        this.weatherViewModel.weatherModelsStatus.observe(this, this.weatherModelsObserver)
+        this.weatherViewModel.weatherModelIndices.observe(this, this.weatherModelIndicesObserver)
 
 
         if (!Places.isInitialized()) {
@@ -62,17 +62,11 @@ class CityListFragment : Fragment(), PlaceSelectionListener {
     }
 
     override fun onPlaceSelected(place: Place) {
-        Log.d("WeatherCity", place.name)
-        Log.d("WeatherCity", place.latLng.toString())
-        Log.d("WeatherCity", "Lat: " + place.latLng?.latitude.toString())
-        Log.d("WeatherCity", "Long: " + place.latLng?.longitude.toString())
-
-        this.autocompleteSupportFragment.setText("")
         this.weatherViewModel.addCity(place?.name!!, place.latLng?.latitude!!, place.latLng?.longitude!!)
     }
 
     override fun onError(status: Status) {
-        Log.d("WeatherCity", "poop")
+        Log.d("WeatherCity", "Failed to search")
     }
 
     private inner class CityWeatherListAdapater(context: Context): BaseAdapter(), View.OnLongClickListener, View.OnClickListener {

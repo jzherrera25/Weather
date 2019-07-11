@@ -22,17 +22,17 @@ class WeatherActivity : AppCompatActivity() {
 
     private lateinit var weatherViewPager: ViewPager
 
-    private var weatherModelsObserver: Observer<List<WeatherModel>> = Observer { newWeatherModels ->
+    private var weatherModelsObserver: Observer<List<Int>> = Observer {
         if (this::weatherViewPager.isInitialized) {
             this.weatherViewPager.adapter?.let {
                 when {
-                    newWeatherModels!!.count() - it.count > 0 -> {
-                        (it as WeatherViewPager).addFragment(newWeatherModels!!.count() - it.count)
+                    this.weatherViewModel.getCityCount() - it.count > 0 -> {
+                        (it as WeatherViewPager).addFragment(this.weatherViewModel.getCityCount() - it.count)
                         it.notifyDataSetChanged()
                         this.weatherViewPager.invalidate()
                     }
-                    it.count - newWeatherModels!!.count() > 0 -> {
-                        (it as WeatherViewPager).removeFragment(it.count - newWeatherModels!!.count())
+                    it.count - this.weatherViewModel.getCityCount() > 0 -> {
+                        (it as WeatherViewPager).removeFragment(it.count - this.weatherViewModel.getCityCount())
                         it.notifyDataSetChanged()
                         this.weatherViewPager.invalidate()
                     }
@@ -64,7 +64,7 @@ class WeatherActivity : AppCompatActivity() {
         this.weatherViewPager = findViewById(R.id.weather_view_pager)
         this.weatherViewPager.adapter = WeatherViewPager(this.supportFragmentManager)
 
-        this.weatherViewModel.weatherModelsStatus.observe(this, this.weatherModelsObserver)
+        this.weatherViewModel.weatherModelIndices.observe(this, this.weatherModelsObserver)
     }
 
     private inner class WeatherViewPager(fm: FragmentManager): FragmentStatePagerAdapter(fm) {
