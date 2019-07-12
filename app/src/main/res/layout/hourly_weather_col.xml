@@ -15,9 +15,11 @@
                android:layout_width="wrap_content"
                android:layout_height="wrap_content"
                android:layout_alignTop="@id/hourly_weather_hour"
-               android:layout_marginTop="15dp"
+               android:layout_marginTop="20dp"
                android:layout_centerHorizontal="true"
-               android:src="@drawable/clear_day"/>
+               android:layout_centerVertical="true"
+               android:src="@drawable/clear_day"
+               style="@style/WeatherIconStyle"/>
 
     <TextView android:id="@+id/hourly_weather_temperature"
               android:layout_width="wrap_content"

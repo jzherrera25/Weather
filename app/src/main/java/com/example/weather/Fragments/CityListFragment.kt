@@ -63,6 +63,7 @@ class CityListFragment : Fragment(), PlaceSelectionListener {
     }
 
     override fun onPlaceSelected(place: Place) {
+        super.
         this.weatherViewModel.addCity(place?.name!!, place.latLng?.latitude!!, place.latLng?.longitude!!)
     }
 

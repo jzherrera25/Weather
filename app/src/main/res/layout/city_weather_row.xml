@@ -12,7 +12,8 @@
                android:layout_centerVertical="true"
                android:layout_alignParentLeft="true"
                android:layout_marginLeft="10dp"
-               android:src="@drawable/clear_day"/>
+               android:src="@drawable/clear_day"
+               style="@style/WeatherIconStyle"/>
 
     <TextView android:id="@+id/city_row_weather_city"
               android:layout_width="wrap_content"
