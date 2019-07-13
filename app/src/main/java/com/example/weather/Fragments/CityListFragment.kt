@@ -5,6 +5,7 @@ import android.content.Context
 import android.opengl.Visibility
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.text.Editable
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.MotionEvent
@@ -63,7 +64,6 @@ class CityListFragment : Fragment(), PlaceSelectionListener {
     }
 
     override fun onPlaceSelected(place: Place) {
-        super.
         this.weatherViewModel.addCity(place?.name!!, place.latLng?.latitude!!, place.latLng?.longitude!!)
     }
 

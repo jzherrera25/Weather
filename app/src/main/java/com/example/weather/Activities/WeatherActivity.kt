@@ -30,14 +30,14 @@ class WeatherActivity : AppCompatActivity() {
                     this.weatherViewModel.getCityCount() - it.count > 0 -> {
                         (it as WeatherViewPager).addFragment(this.weatherViewModel.getCityCount() - it.count)
                         it.notifyDataSetChanged()
-                        this.weatherViewPager.invalidate()
                     }
                     it.count - this.weatherViewModel.getCityCount() > 0 -> {
                         (it as WeatherViewPager).removeFragment(it.count - this.weatherViewModel.getCityCount())
                         it.notifyDataSetChanged()
-                        this.weatherViewPager.invalidate()
                     }
-                    else -> it.notifyDataSetChanged()
+                    else -> {
+                        it.notifyDataSetChanged()
+                    }
                 }
                 if (this.weatherViewPager.currentItem >= it.count) {
                     this.weatherViewPager.currentItem = it.count - 1
@@ -86,6 +86,11 @@ class WeatherActivity : AppCompatActivity() {
                 this@WeatherActivity.supportFragmentManager.beginTransaction()
                     .remove(this.fragments.last()).commitNow()
                 this.fragments.removeAt(this.fragments.lastIndex)
+//
+//                this@WeatherActivity.supportFragmentManager.beginTransaction().detach(this.fragments[this@WeatherActivity.weatherViewPager.currentItem])
+//                    .attach(this.fragments[this@WeatherActivity.weatherViewPager.currentItem])
+//                    .commitNow()
+//                Log.d("WeatherActivity", this@WeatherActivity.weatherViewPager.currentItem.toString())
             }
         }
 

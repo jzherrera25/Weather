@@ -66,9 +66,7 @@ class WeatherModelManager {
                 val tempWeatherModel = this.weatherModelMap[i]
                 tempWeatherModel?.let {
                     if (it.index > index!!) {
-                        Log.d("WeatherModelManager", "Index " + it.index.toString())
                         it.index -= 1
-                        Log.d("WeatherModelManager", "Index " + it.index.toString())
                         this.weatherModelMap[it.index] = it
                     }
                 }

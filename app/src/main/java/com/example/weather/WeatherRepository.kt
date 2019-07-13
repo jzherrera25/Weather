@@ -59,14 +59,12 @@ class WeatherRepository private constructor() {
     }
 
     private fun getWeather(index: Int) {
-        Log.d("WeatherRepository", "Weather Index " + index.toString())
         this.weatherModelManager.getWeatherModel(index)?.let {
             this.weatherServiceApi.getWeather(this.darkSkyApiKey, it.latitude.toString(), it.longitude.toString())
                 .enqueue(object: Callback<WeatherResult> {
                     override fun onResponse(call: Call<WeatherResult>, response: Response<WeatherResult>) {
                         // Update weatherModelStatus
                         it.weather = response.body()
-                        Log.d("WeatherRepository", it.weather?.currently?.temperature?.toString())
 
                         // Store weather in database.
                         this@WeatherRepository.weatherModelManager.updateWeatherModel(it)

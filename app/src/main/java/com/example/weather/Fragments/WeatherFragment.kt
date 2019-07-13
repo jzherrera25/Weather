@@ -32,10 +32,12 @@ class WeatherFragment : Fragment() {
     private lateinit var swipeRefreshLayout: SwipeRefreshLayout
 
     private var weatherModelsObserver: Observer<List<Int>> = Observer { updatedIndices ->
+        updatedIndices?.forEach { Log.d("WeatherFragment", it.toString() + "Updated") }
         updatedIndices?.contains(this.position)?.let {
             if (it) {
+                Log.d("WeatherFragment", this.position.toString() + "Fragment Position")
                 this.cityTextView?.text = this.weatherViewModel.getCityName(this.position)
-
+                Log.d("WeatherFragment",  this.weatherViewModel.getCityName(this.position))
                 this.currentDescriptionTextView?.text = this.weatherViewModel.getCityWeatherDescription(this.position)
 
                 this.currentTempTextView?.text = this.weatherViewModel.getCityCurrentTemp(this.position).toString()
@@ -48,20 +50,10 @@ class WeatherFragment : Fragment() {
         this.swipeRefreshLayout.isRefreshing = false
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        this.weatherViewModel.weatherModelIndices.observe(this, this.weatherModelsObserver)
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        this.weatherViewModel.weatherModelIndices.removeObserver(this.weatherModelsObserver)
-    }
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_weather, container, false)
-
+        this.weatherViewModel.weatherModelIndices.observe(viewLifecycleOwner, this.weatherModelsObserver)
         hourlyRecyclerView = view.findViewById(R.id.weather_fragment_hourly_recycler_view)
         hourlyRecyclerView.adapter = HourlyRecyclerAdapter(view.context)
 
@@ -83,6 +75,15 @@ class WeatherFragment : Fragment() {
         }
 
         return view
+    }
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        this.weatherViewModel.weatherModelIndices.removeObserver(this.weatherModelsObserver)
     }
 
     private open inner class HourlyViewHolder(v: View): RecyclerView.ViewHolder(v) {
