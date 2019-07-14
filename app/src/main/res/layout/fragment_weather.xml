@@ -6,31 +6,44 @@
              android:layout_height="match_parent"
              tools:context=".Fragments.WeatherFragment">
 
-    <TextView
-            android:id="@+id/weather_fragment_city"
-            android:layout_centerHorizontal="true"
-            android:layout_alignParentTop="true"
-            android:layout_marginTop="50dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="City Placeholder"/>
-    <TextView
-            android:id="@+id/weather_fragment_description"
-            android:layout_centerHorizontal="true"
-            android:layout_alignTop="@id/weather_fragment_city"
-            android:layout_marginTop="25dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Description Placeholder"/>
-    <TextView
-            android:id="@+id/weather_fragment_temperature"
-            android:layout_centerHorizontal="true"
-            android:layout_alignTop="@id/weather_fragment_description"
-            android:layout_marginTop="30dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Temperature Placeholder"
-            android:textSize="30sp"/>
+    <android.support.v4.widget.SwipeRefreshLayout
+            android:layout_width="match_parent"
+            android:layout_height="175dp"
+            android:id="@+id/weather_swipe_refresh">
+        <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                        xmlns:app="http://schemas.android.com/apk/res-auto"
+                        xmlns:tools="http://schemas.android.com/tools"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        tools:context=".Fragments.WeatherFragment">
+            <TextView
+                    android:id="@+id/weather_fragment_city"
+                    android:layout_centerHorizontal="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginTop="50dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="City Placeholder"/>
+            <TextView
+                    android:id="@+id/weather_fragment_description"
+                    android:layout_centerHorizontal="true"
+                    android:layout_alignTop="@id/weather_fragment_city"
+                    android:layout_marginTop="25dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Description Placeholder"/>
+            <TextView
+                    android:id="@+id/weather_fragment_temperature"
+                    android:layout_centerHorizontal="true"
+                    android:layout_alignTop="@id/weather_fragment_description"
+                    android:layout_marginTop="30dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Temperature Placeholder"
+                    android:textSize="30sp"/>
+            </RelativeLayout>
+
+    </android.support.v4.widget.SwipeRefreshLayout>
 
     <android.support.v7.widget.RecyclerView
             app:layoutManager="android.support.v7.widget.LinearLayoutManager"
@@ -39,8 +52,8 @@
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:foregroundGravity="center"
-            android:layout_alignTop="@id/weather_fragment_temperature"
-            android:layout_marginTop="60dp"
+            android:layout_alignTop="@id/weather_swipe_refresh"
+            android:layout_marginTop="175dp"
             android:orientation="horizontal"/>
 
     <ListView

@@ -4,7 +4,6 @@ import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentStatePagerAdapter
-import android.support.v4.app.FragmentTransaction
 import android.support.v4.view.ViewPager
 import android.support.v4.widget.DrawerLayout
 import android.support.v7.app.ActionBarDrawerToggle
@@ -13,17 +12,13 @@ import com.example.weather.Fragments.WeatherFragment
 import com.example.weather.R
 import com.example.weather.ViewModels.WeatherViewModel
 import android.arch.lifecycle.Observer
-import android.support.v4.widget.SwipeRefreshLayout
-import android.util.Log
 import com.example.weather.Fragments.CityListFragment
-import com.example.weather.Models.WeatherModels.WeatherModel
 
 class WeatherActivity : AppCompatActivity() {
 
     private val weatherViewModel: WeatherViewModel = WeatherViewModel()
 
     private lateinit var weatherViewPager: ViewPager
-    private lateinit var swipeRefreshLayout: SwipeRefreshLayout
 
     private var weatherModelsObserver: Observer<List<Int>> = Observer {
         if (this::weatherViewPager.isInitialized) {
@@ -46,7 +41,6 @@ class WeatherActivity : AppCompatActivity() {
                 }
             }
         }
-        this.swipeRefreshLayout.isRefreshing = false
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -72,11 +66,6 @@ class WeatherActivity : AppCompatActivity() {
         this.weatherViewPager.adapter = WeatherViewPager(this.supportFragmentManager)
 
         this.weatherViewModel.weatherModelIndices.observe(this, this.weatherModelsObserver)
-
-        this.swipeRefreshLayout = findViewById(R.id.weather_swipe_refresh)
-        this.swipeRefreshLayout.setOnRefreshListener {
-            this.swipeRefreshLayout.isRefreshing = this.weatherViewModel.doRefreshAll()
-        }
     }
 
     fun goToPage(position: Int) {

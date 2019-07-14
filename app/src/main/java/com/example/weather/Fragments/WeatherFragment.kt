@@ -4,6 +4,7 @@ import android.arch.lifecycle.Observer
 import android.content.Context
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.view.LayoutInflater
@@ -27,6 +28,7 @@ class WeatherFragment : Fragment() {
     private lateinit var currentTempTextView: TextView
     private lateinit var hourlyRecyclerView: RecyclerView
     private lateinit var dailyListView: ListView
+    private lateinit var swipeRefreshLayout: SwipeRefreshLayout
 
     private var weatherModelsObserver: Observer<List<Int>> = Observer { updatedIndices ->
         updatedIndices?.contains(this.position)?.let {
@@ -42,6 +44,7 @@ class WeatherFragment : Fragment() {
                 (this.dailyListView?.adapter as? DailyListAdapter)?.notifyDataSetChanged()
             }
         }
+        this.swipeRefreshLayout.isRefreshing = false
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -62,6 +65,11 @@ class WeatherFragment : Fragment() {
 
         this.currentTempTextView = view.findViewById(R.id.weather_fragment_temperature)
         this.currentTempTextView?.text = this.weatherViewModel.getCityCurrentTemp(this.position).toString()
+
+        this.swipeRefreshLayout = view.findViewById(R.id.weather_swipe_refresh)
+        this.swipeRefreshLayout.setOnRefreshListener {
+            this.swipeRefreshLayout.isRefreshing = this.weatherViewModel.doRefreshAll()
+        }
 
         return view
     }
