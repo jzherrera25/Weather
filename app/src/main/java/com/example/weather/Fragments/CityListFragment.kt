@@ -2,43 +2,33 @@ package com.example.weather.Fragments
 
 import android.arch.lifecycle.Observer
 import android.content.Context
-import android.opengl.Visibility
 import android.os.Bundle
 import android.support.v4.app.Fragment
-import android.text.Editable
 import android.util.Log
 import android.view.LayoutInflater
-import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
-import com.example.weather.Models.WeatherModels.WeatherModel
+import com.example.weather.Activities.WeatherActivity
 import com.example.weather.R
 import com.example.weather.ViewModels.WeatherViewModel
 import com.google.android.gms.common.api.Status
 import com.google.android.libraries.places.api.Places
-import com.google.android.libraries.places.api.model.AutocompletePrediction
 import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.api.model.TypeFilter
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener
-import java.util.*
-import kotlin.collections.ArrayList
 
 
 class CityListFragment : Fragment(), PlaceSelectionListener {
 
     private lateinit var weatherViewModel: WeatherViewModel
     private lateinit var cityListView: ListView
-    private lateinit var autocompleteSupportFragment: AutocompleteSupportFragment
+    private lateinit var autocompleteSupportFragment: WrappedAutocompleteSupportFragment
 
     private var weatherModelIndicesObserver: Observer<List<Int>> = Observer {
         (this.cityListView.adapter as? CityWeatherListAdapater)?.notifyDataSetChanged()
         (this.cityListView.adapter as? CityWeatherListAdapater)?.notifyDataSetInvalidated()
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -55,7 +45,7 @@ class CityListFragment : Fragment(), PlaceSelectionListener {
             Places.initialize(view.context, "AIzaSyCVxQr8GgMh4isXwOVeuDPdTWW_kMBfQYc")
         }
 
-        this.autocompleteSupportFragment = this.fragmentManager?.findFragmentById(R.id.autocomplete_fragment) as AutocompleteSupportFragment
+        this.autocompleteSupportFragment = this.fragmentManager?.findFragmentById(R.id.autocomplete_fragment) as WrappedAutocompleteSupportFragment
         this.autocompleteSupportFragment.setTypeFilter(TypeFilter.CITIES)
         this.autocompleteSupportFragment.setPlaceFields(listOf(Place.Field.LAT_LNG, Place.Field.NAME))
         this.autocompleteSupportFragment.setOnPlaceSelectedListener(this)
@@ -64,7 +54,7 @@ class CityListFragment : Fragment(), PlaceSelectionListener {
     }
 
     override fun onPlaceSelected(place: Place) {
-        this.weatherViewModel.addCity(place?.name!!, place.latLng?.latitude!!, place.latLng?.longitude!!)
+        this.weatherViewModel.addCity(place.name!!, place.latLng?.latitude!!, place.latLng?.longitude!!)
     }
 
     override fun onError(status: Status) {
@@ -131,10 +121,12 @@ class CityListFragment : Fragment(), PlaceSelectionListener {
             deleteButton?.visibility = View.INVISIBLE
             cityTemperature?.visibility = View.VISIBLE
 
+            val weatherActivity: WeatherActivity? = this@CityListFragment.activity as? WeatherActivity
+            weatherActivity?.goToPage(this@CityListFragment.cityListView.getPositionForView(v))
         }
 
         fun getDrawableId(resourceName: String?) : Int {
-            return resources.getIdentifier(resourceName?.toString().orEmpty(), "drawable", this@CityListFragment.activity?.packageName)
+            return resources.getIdentifier(resourceName?.orEmpty().toString(), "drawable", this@CityListFragment.activity?.packageName)
         }
     }
 

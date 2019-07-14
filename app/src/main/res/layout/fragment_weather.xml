@@ -6,22 +6,11 @@
              android:layout_height="match_parent"
              tools:context=".Fragments.WeatherFragment">
 
-    <android.support.v4.widget.SwipeRefreshLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginTop="?attr/actionBarSize"
-            android:id="@+id/weather_swipe_refresh">
-
-        <ScrollView android:layout_width="match_parent"
-                    android:layout_height="match_parent"/>
-
-    </android.support.v4.widget.SwipeRefreshLayout>
-
     <TextView
             android:id="@+id/weather_fragment_city"
             android:layout_centerHorizontal="true"
             android:layout_alignParentTop="true"
-            android:layout_marginTop="100dp"
+            android:layout_marginTop="50dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="City Placeholder"/>

@@ -13,6 +13,7 @@ import com.example.weather.Fragments.WeatherFragment
 import com.example.weather.R
 import com.example.weather.ViewModels.WeatherViewModel
 import android.arch.lifecycle.Observer
+import android.support.v4.widget.SwipeRefreshLayout
 import android.util.Log
 import com.example.weather.Fragments.CityListFragment
 import com.example.weather.Models.WeatherModels.WeatherModel
@@ -22,6 +23,7 @@ class WeatherActivity : AppCompatActivity() {
     private val weatherViewModel: WeatherViewModel = WeatherViewModel()
 
     private lateinit var weatherViewPager: ViewPager
+    private lateinit var swipeRefreshLayout: SwipeRefreshLayout
 
     private var weatherModelsObserver: Observer<List<Int>> = Observer {
         if (this::weatherViewPager.isInitialized) {
@@ -44,6 +46,7 @@ class WeatherActivity : AppCompatActivity() {
                 }
             }
         }
+        this.swipeRefreshLayout.isRefreshing = false
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -69,6 +72,15 @@ class WeatherActivity : AppCompatActivity() {
         this.weatherViewPager.adapter = WeatherViewPager(this.supportFragmentManager)
 
         this.weatherViewModel.weatherModelIndices.observe(this, this.weatherModelsObserver)
+
+        this.swipeRefreshLayout = findViewById(R.id.weather_swipe_refresh)
+        this.swipeRefreshLayout.setOnRefreshListener {
+            this.swipeRefreshLayout.isRefreshing = this.weatherViewModel.doRefreshAll()
+        }
+    }
+
+    fun goToPage(position: Int) {
+        this.weatherViewPager.currentItem = position
     }
 
     private inner class WeatherViewPager(fm: FragmentManager): FragmentStatePagerAdapter(fm) {
@@ -86,11 +98,6 @@ class WeatherActivity : AppCompatActivity() {
                 this@WeatherActivity.supportFragmentManager.beginTransaction()
                     .remove(this.fragments.last()).commitNow()
                 this.fragments.removeAt(this.fragments.lastIndex)
-//
-//                this@WeatherActivity.supportFragmentManager.beginTransaction().detach(this.fragments[this@WeatherActivity.weatherViewPager.currentItem])
-//                    .attach(this.fragments[this@WeatherActivity.weatherViewPager.currentItem])
-//                    .commitNow()
-//                Log.d("WeatherActivity", this@WeatherActivity.weatherViewPager.currentItem.toString())
             }
         }
 

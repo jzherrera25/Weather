@@ -4,7 +4,6 @@ import android.arch.lifecycle.Observer
 import android.content.Context
 import android.os.Bundle
 import android.support.v4.app.Fragment
-import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.view.LayoutInflater
@@ -14,7 +13,6 @@ import android.widget.BaseAdapter
 import android.widget.ImageView
 import android.widget.ListView
 import android.widget.TextView
-import com.example.weather.Models.WeatherModels.WeatherModel
 
 import com.example.weather.R
 import com.example.weather.ViewModels.WeatherViewModel
@@ -29,15 +27,12 @@ class WeatherFragment : Fragment() {
     private lateinit var currentTempTextView: TextView
     private lateinit var hourlyRecyclerView: RecyclerView
     private lateinit var dailyListView: ListView
-    private lateinit var swipeRefreshLayout: SwipeRefreshLayout
 
     private var weatherModelsObserver: Observer<List<Int>> = Observer { updatedIndices ->
-        updatedIndices?.forEach { Log.d("WeatherFragment", it.toString() + "Updated") }
         updatedIndices?.contains(this.position)?.let {
             if (it) {
-                Log.d("WeatherFragment", this.position.toString() + "Fragment Position")
                 this.cityTextView?.text = this.weatherViewModel.getCityName(this.position)
-                Log.d("WeatherFragment",  this.weatherViewModel.getCityName(this.position))
+
                 this.currentDescriptionTextView?.text = this.weatherViewModel.getCityWeatherDescription(this.position)
 
                 this.currentTempTextView?.text = this.weatherViewModel.getCityCurrentTemp(this.position).toString()
@@ -47,7 +42,6 @@ class WeatherFragment : Fragment() {
                 (this.dailyListView?.adapter as? DailyListAdapter)?.notifyDataSetChanged()
             }
         }
-        this.swipeRefreshLayout.isRefreshing = false
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -69,16 +63,7 @@ class WeatherFragment : Fragment() {
         this.currentTempTextView = view.findViewById(R.id.weather_fragment_temperature)
         this.currentTempTextView?.text = this.weatherViewModel.getCityCurrentTemp(this.position).toString()
 
-        this.swipeRefreshLayout = view.findViewById(R.id.weather_swipe_refresh)
-        this.swipeRefreshLayout.setOnRefreshListener {
-            this.swipeRefreshLayout.isRefreshing = this.weatherViewModel.doRefreshAll()
-        }
-
         return view
-    }
-
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
     }
 
     override fun onDestroyView() {
