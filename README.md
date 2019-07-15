@@ -2,13 +2,11 @@
 
 A weather app utilizing Dark Sky API, and Google Places to query a city's weather based on it's latitude and longitude. Google Places returns the city's latitude and longitude. Dark Sky uses the queried lat/long.
 
+<img src="Weather-app.gif" width="33%" height="33%" />
+
 ## Architecture
 
-### Weather Model
-
-### Weather Repository
-
-### Weather ViewModel
+<img src="Weather-Architecture.jpg" width="75%" height="75%" />
 
 ## Authors
 
