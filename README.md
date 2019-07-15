@@ -1,17 +1,18 @@
 # Weather App
 
-Android weather app.
+A weather app utilizing Dark Sky API, and Google Places to query a city's weather based on it's latitude and longitude. Google Places returns the city's latitude and longitude. Dark Sky uses the queried lat/long.
 
 ## Architecture
 
+### Weather Model
 
+### Weather Repository
 
-### Packages
-
+### Weather ViewModel
 
 ## Authors
 
-* **Joshua Herrera** - *Initial work*
+* **Joshua Herrera** 
 
 ## License
 
